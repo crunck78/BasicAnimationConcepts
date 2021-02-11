@@ -2,12 +2,27 @@
 <html>
   <head>
     <link href="css/styles.css" rel="stylesheet">
+	  <script defer src="js/scripts.js"></script>
   </head>
   <body>
 
-    <h1>My Website</h1>
+	<canvas id="cnv"></canvas>
+	<div id="touchpad" class="touchpad-container" class="d-none">
+	  <div class="pad-container">
+		L-
+		<button type="button" id="left-pad" class="pad"></button>
+		<button type="button" id="right-pad" class="pad"></button>
+		-R
+	  </div>
 
-    <p>This is my first website</p>
+	  <div class="pad-container">
+		T-
+		<button type="button" id="trow-pad" class="pad"></button>
+		<button type="button" id="jump-pad" class="pad"></button>
+		-J
+	  </div>
+	</div>
+	<div id="log"></div>
 
   </body>
 </html>		

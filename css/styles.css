@@ -1,4 +1,25 @@
 body
 {
-  font-size: 40pt;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.touchpad-container {
+  background-color: white;
+  display: flex;
+  justify-content: space-between;
+  width: 720px;
+}
+
+.pad {
+  width: 60px;
+  height: 60px;
+}
+
+.pad-container {
+  display: flex;
+  justify-content: space-between;
+  width: 300px;
+  align-items: center;
 }
