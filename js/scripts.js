@@ -1,6 +1,6 @@
 const RIGHT = 0;
 const LEFT = 1;
-const GRAVITY = 9.81;
+const GRAVITY = 98.1;
 let cnv = document.getElementById("cnv");
 cnv.width = window.innerWidth;
 cnv.height = window.innerWidth * 0.75;
@@ -11,6 +11,7 @@ const GROUND_POS = cnv.height - 150;
 let log = document.getElementById("log");
 let startDraw;
 let startUpdate;
+let startJump;
 let MOVEMENT_SPEED = 20;
 
 let player = createPlayer(20, GROUND_POS, 150, 100);
@@ -37,19 +38,45 @@ function updateLoop(timestamp){
 	
 	obj.x -= obj.movementSpeed * obj.distance;
 	
-	console.log(isColliding(player, obj));
+	//console.log(isColliding(player, obj));
 	//console.log(player.requestJump);
 	
 	requestAnimationFrame(updateLoop);
 }
 
-// function updatePlayer(timeStamp){
+//function updatePlayer(timeStamp){
 // 	//TODO
-// 	if(player.requestJump){
-// 		player.yPos = 0 - (Math.sin(1.57079633) * player.jumpVelocity * timePassed + (0.5 * GRAVITY * timePassed * timePassed));
-// 	}
-// 	requestAnimationFrame(updatePlayer);
-// }
+//	let timeStampInSec = timeStamp / 1000;
+//	player.y = (player.jumpVelocity * timeStampInSec) + (0.5 * GRAVITY * Math.pow(timeStampInSec, 2)) + GROUND_POS;
+//	log.innerHTML = `${player.y}<br>${Math.trunc(timeStampInSec)}<br>${reqId}`;
+//	if( player.y <= GROUND_POS && timeStampInSec > 0)
+//		requestAnimationFrame(updatePlayer);
+//}
+
+function updatePlayer(timeStamp){
+	
+	if(startJump === undefined){
+		//log.innerHTML += `<br>FIRST JUMP START<br>`;
+		startJump = timeStamp;
+	}else if(player.y <= GROUND_POS){
+		//log.innerHTML = `<br>PERFORMING JUMP<br>`;
+	}else{
+		//log.innerHTML += `<br>PERFORMING NEXT JUMP<br>`;
+		startJump = timeStamp;
+	}
+	const elapse = (timeStamp - startJump) / 1000;
+	//log.innerHTML += `<br>${player.y}<br>${elapse}<br>${startJump}<br>`;
+	player.y = (player.jumpVelocity * elapse) + (0.5 * GRAVITY * Math.pow(elapse, 2)) + GROUND_POS;
+	//log.innerHTML += `<br>${player.y}<br>${elapse}<br>${startJump}<br>`;
+	if(player.y <= GROUND_POS){
+		//log.innerHTML += `<br>STILL IN THERE AIR<br>`;
+		requestAnimationFrame(updatePlayer);
+	}
+	else{
+		log.innerHTML = `<br>LANDED ON GROUND POS<br>`;
+		//player.y = GROUND_POS;
+	}
+}
 
 function createObj(xPos, yPos, width, height){
 	return{
@@ -72,8 +99,9 @@ function createPlayer(xPos, yPos, width, height){
 		isMovingRight: false,
 		isJumping: false,
 		direction: RIGHT,
-		requestJump: false,
-		jumpVelocity: 1
+		allowJump: false,
+		jumpVelocity: -200,
+		jumpRequestTime: 0
 	};
 }
 
@@ -96,8 +124,8 @@ function isColliding( obj1, obj2){
 
 drawLoop();
 updateLoop();
-//listenForTouches(player);
-listenForKeys(player);
+listenForTouches(player);
+//listenForKeys(player);
 
 function listenForTouches(character) {
   document.getElementById("left-pad").addEventListener("touchstart", function (e) {
@@ -121,14 +149,15 @@ function listenForTouches(character) {
   });
 
   document.getElementById("jump-pad").addEventListener("touchstart", function (e) {
-	  e.preventDefault();
-      character.requestJump = true;
-  });
-
-  document.getElementById("jump-pad").addEventListener("touchend", function (e) {
 	e.preventDefault();
-	character.requestJump = false;
-});
+	character.allowJump = character.y >= GROUND_POS ? true : false;
+	if(character.allowJump){
+		log.innerHTML += `<br>Allow Jump Request<br>`;
+		window.requestAnimationFrame(updatePlayer);
+	}else{
+		log.innerHTML = `<br>Reject Jump Request<br>`;
+	}
+  });
 
   document.getElementById("trow-pad").addEventListener("touchstart", function (e) {
    	e.preventDefault();
@@ -139,7 +168,7 @@ function listenForKeys(character) {
 	document.addEventListener("keydown", function (e) {
 	  const k = e.key;
 	  if (e.code == "Space") {
-		character.requestJump = true;
+
 	  }
 
 	  if (k == "ArrowRight") {
@@ -163,9 +192,6 @@ function listenForKeys(character) {
 	  }
 	  if (k == "ArrowLeft") {
 		character.isMovingLeft = false;
-	  }
-	  if (e.code == "Space") {
-		character.requestJump = false;
 	  }
 	});
   }
