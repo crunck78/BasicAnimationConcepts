@@ -23,3 +23,7 @@ body {
   width: 300px;
   align-items: center;
 }
+
+.d-none{
+  display: none !important;
+}
