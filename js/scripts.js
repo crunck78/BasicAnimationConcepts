@@ -1,27 +1,52 @@
 /**
- * Reference to a div element used to log infos  out.
+ * Reference to a div element used to log infos out.
  */
 const log = document.getElementById("log");
 /**
  * Reference to the canvas element.
  */
 const cnv = document.getElementById("cnv");
-cnv.width = window.innerWidth;
-cnv.height = window.innerWidth * 0.75;
+cnv.width = window.innerWidth - window.innerWidth * 0.1;
+cnv.height = window.innerHeight - window.innerHeight * 0.1;
 cnv.style.border = "3px solid black";
+
 /**
  * 2d rendering context to draw in the canvas.
  * @constant {CanvasRenderingContext2D}
  */
 const ctx = cnv.getContext("2d");
 
+/**
+ * The y coordinate representing the ground level of the game.
+ */
 const GROUND_POS = cnv.height - 150;
-const RIGHT = 0; 
+/**
+ * Index to access the right side character animations array.  
+ */
+const RIGHT = 0;
+/**
+ * Index to access the left side character animations array.  
+ */
 const LEFT = 1;
-const GRAVITY = 98.1 * 10;
-
+/**
+ * Value that affects the jumping and throwing motions.
+ * @var {{number}}
+ */
+const GRAVITY = 9.81 * 100;
+/**
+ * Holds the starting timeStamp of every jump animation.
+ * @var {{number}}
+ */
 let startJump;
+/**
+ * Holds the starting timeStamp of every throw animation.
+ * @var {{number}}
+ */
 let startThrow;
+/**
+ * Holds the starting timeStamp of the drawLoop function.
+ * @var {{number}}
+ */
 let startDraw;
 
 let obj = createObj(cnv.width - 200, GROUND_POS - 100, 150, 100);
@@ -42,11 +67,11 @@ function drawLoop(timeStamp) {
 	draw(player);
 	if(player.throwInProgress){
 		draw(player.bottle);
-		let bottle = new Image();
-		const elapseBottleChange = Math.trunc((timeStamp - startDraw) / 60);
-		bottle.src = ` C:/Users/scoo_/Documents/dev/GitHub/eu/el-pollo-loco-v3/img/bottle-throw/bottleThrow_${elapseBottleChange % 4}.png`;
-		if(bottle.complete)
-			ctx.drawImage(bottle, player.bottle.x, player.bottle.y, bottle.width * 0.2, bottle.height * 0.2);
+//		let bottle = new Image();
+//		const elapseBottleChange = Math.trunc((timeStamp - startDraw) / 60);
+//		bottle.src = ` C:/Users/scoo_/Documents/dev/GitHub/eu/el-pollo-loco-v3/img/bottle-throw/bottleThrow_${elapseBottleChange % 4}.png`;
+//		if(bottle.complete)
+//			ctx.drawImage(bottle, player.bottle.x, player.bottle.y, bottle.width * 0.2, bottle.height * 0.2);
 	}
 	requestAnimationFrame(drawLoop);
 }
@@ -56,6 +81,11 @@ function drawLoop(timeStamp) {
  */
 function updateLoop() {
 	obj.x -= obj.movementSpeed * obj.distance;
+	if(isColliding(player, obj)){
+		log.innerHTML = "Collision!";
+	}else{
+		log.innerHTML = "";
+	}
 	requestAnimationFrame(updateLoop);
 }
 
@@ -111,7 +141,6 @@ function throwBottle(timeStamp){
 		player.bottle.y = player.bottle.groundPos; // throw hit the ground , adjust to same altitude
 	}
 }
-
 
 /**
  * Returns an object representing an item. Instance can be used as an argument to draw(elm) calls to visualize the item as a rectangle  
@@ -218,26 +247,37 @@ function listenForTouches(character) {
 	document.getElementById("left-pad").addEventListener("touchstart", function (e) {
 		e.preventDefault();
 		character.isMovingLeft = true;
+		character.direction = LEFT;
+		player.requestMoveLeft = window.requestAnimationFrame(moveLeft);
 	});
 	document.getElementById("left-pad").addEventListener("touchend", function (e) {
 		e.preventDefault();
 		character.isMovingLeft = false;
+		window.cancelAnimationFrame(player.requestMoveLeft);
+		
 	});
 	document.getElementById("right-pad").addEventListener("touchstart", function (e) {
 		e.preventDefault();
 		character.isMovingRight = true;
+		character.direction = RIGHT;
+		player.requestMoveRight = window.requestAnimationFrame(moveRight);
 	});
 	document.getElementById("right-pad").addEventListener("touchend", function (e) {
 		e.preventDefault();
 		character.isMovingRight = false;
+		window.cancelAnimationFrame(player.requestMoveRight);
 	});
 	document.getElementById("jump-pad").addEventListener("touchstart", function (e) {
 		e.preventDefault();
 		if (!character.jumpInProgess)
-			window.requestAnimationFrame(updatePlayer);
+			window.requestAnimationFrame(jump);
 	});
 	document.getElementById("trow-pad").addEventListener("touchstart", function (e) {
 		e.preventDefault();
+		if (!character.throwInProgress){
+			character.bottle.initY = character.y;
+			window.requestAnimationFrame(throwBottle);
+		}
 	});
 }
 
