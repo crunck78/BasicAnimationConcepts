@@ -42,11 +42,11 @@ function drawLoop(timeStamp) {
 	draw(player);
 	if(player.throwInProgress){
 		draw(player.bottle);
-		let bottle = new Image();
-		const elapseBottleChange = Math.trunc((timeStamp - startDraw) / 60);
-		bottle.src = ` C:/Users/scoo_/Documents/dev/GitHub/eu/el-pollo-loco-v3/img/bottle-throw/bottleThrow_${elapseBottleChange % 4}.png`;
-		if(bottle.complete)
-			ctx.drawImage(bottle, player.bottle.x, player.bottle.y, bottle.width * 0.2, bottle.height * 0.2);
+//		let bottle = new Image();
+//		const elapseBottleChange = Math.trunc((timeStamp - startDraw) / 60);
+//		bottle.src = ` C:/Users/scoo_/Documents/dev/GitHub/eu/el-pollo-loco-v3/img/bottle-throw/bottleThrow_${elapseBottleChange % 4}.png`;
+//		if(bottle.complete)
+//			ctx.drawImage(bottle, player.bottle.x, player.bottle.y, bottle.width * 0.2, bottle.height * 0.2);
 	}
 	requestAnimationFrame(drawLoop);
 }
@@ -56,6 +56,11 @@ function drawLoop(timeStamp) {
  */
 function updateLoop() {
 	obj.x -= obj.movementSpeed * obj.distance;
+	if(isColliding(player, obj)){
+		log.innerHTML = "Collision!";
+	}else{
+		log.innerHTML = "";
+	}
 	requestAnimationFrame(updateLoop);
 }
 
@@ -218,26 +223,37 @@ function listenForTouches(character) {
 	document.getElementById("left-pad").addEventListener("touchstart", function (e) {
 		e.preventDefault();
 		character.isMovingLeft = true;
+		character.direction = LEFT;
+		player.requestMoveLeft = window.requestAnimationFrame(moveLeft);
 	});
 	document.getElementById("left-pad").addEventListener("touchend", function (e) {
 		e.preventDefault();
 		character.isMovingLeft = false;
+		window.cancelAnimationFrame(player.requestMoveLeft);
+		
 	});
 	document.getElementById("right-pad").addEventListener("touchstart", function (e) {
 		e.preventDefault();
 		character.isMovingRight = true;
+		character.direction = RIGHT;
+		player.requestMoveRight = window.requestAnimationFrame(moveRight);
 	});
 	document.getElementById("right-pad").addEventListener("touchend", function (e) {
 		e.preventDefault();
 		character.isMovingRight = false;
+		window.cancelAnimationFrame(player.requestMoveRight);
 	});
 	document.getElementById("jump-pad").addEventListener("touchstart", function (e) {
 		e.preventDefault();
 		if (!character.jumpInProgess)
-			window.requestAnimationFrame(updatePlayer);
+			window.requestAnimationFrame(jump);
 	});
 	document.getElementById("trow-pad").addEventListener("touchstart", function (e) {
 		e.preventDefault();
+		if (!character.throwInProgress){
+			character.bottle.initY = character.y;
+			window.requestAnimationFrame(throwBottle);
+		}
 	});
 }
 
