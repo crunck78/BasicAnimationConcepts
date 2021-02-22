@@ -1,27 +1,52 @@
 /**
- * Reference to a div element used to log infos  out.
+ * Reference to a div element used to log infos out.
  */
 const log = document.getElementById("log");
 /**
  * Reference to the canvas element.
  */
 const cnv = document.getElementById("cnv");
-cnv.width = window.innerWidth;
-cnv.height = window.innerWidth * 0.75;
+cnv.width = window.innerWidth - window.innerWidth * 0.1;
+cnv.height = window.innerHeight - window.innerHeight * 0.1;
 cnv.style.border = "3px solid black";
+
 /**
  * 2d rendering context to draw in the canvas.
  * @constant {CanvasRenderingContext2D}
  */
 const ctx = cnv.getContext("2d");
 
+/**
+ * The y coordinate representing the ground level of the game.
+ */
 const GROUND_POS = cnv.height - 150;
-const RIGHT = 0; 
+/**
+ * Index to access the right side character animations array.  
+ */
+const RIGHT = 0;
+/**
+ * Index to access the left side character animations array.  
+ */
 const LEFT = 1;
-const GRAVITY = 98.1 * 10;
-
+/**
+ * Value that affects the jumping and throwing motions.
+ * @var {{number}}
+ */
+const GRAVITY = 9.81 * 100;
+/**
+ * Holds the starting timeStamp of every jump animation.
+ * @var {{number}}
+ */
 let startJump;
+/**
+ * Holds the starting timeStamp of every throw animation.
+ * @var {{number}}
+ */
 let startThrow;
+/**
+ * Holds the starting timeStamp of the drawLoop function.
+ * @var {{number}}
+ */
 let startDraw;
 
 let obj = createObj(cnv.width - 200, GROUND_POS - 100, 150, 100);
@@ -116,7 +141,6 @@ function throwBottle(timeStamp){
 		player.bottle.y = player.bottle.groundPos; // throw hit the ground , adjust to same altitude
 	}
 }
-
 
 /**
  * Returns an object representing an item. Instance can be used as an argument to draw(elm) calls to visualize the item as a rectangle  
