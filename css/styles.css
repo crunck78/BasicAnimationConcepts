@@ -27,3 +27,9 @@ body {
 .d-none{
   display: none !important;
 }
+
+#log{
+  position: absolute;
+  top: 0;
+  left: 0;
+}

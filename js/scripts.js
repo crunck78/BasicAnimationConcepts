@@ -60,7 +60,6 @@ function drawLoop(timeStamp) {
 	if(startDraw === undefined){
 		startDraw = timeStamp;
 	}
-	
 	clearCanvas();
 	drawGroundLine();
 	draw(obj);
@@ -148,7 +147,7 @@ function throwBottle(timeStamp){
  * @param {number} yPos - coordinate y on canvas
  * @param {number} width - width of the instance
  * @param {number} height - height of the instance
- * @returns {{}} - object structure of a player
+ * @returns {{}} - object structure of a object in game
  */
 function createObj(xPos, yPos, width, height) {
 	return {
