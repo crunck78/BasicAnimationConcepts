@@ -187,7 +187,7 @@ function createPlayer(xPos, yPos, width, height) {
 		throwAngle: 0.78539816, //Radians -> 45 Degrees
 		jumpInProgess: false,
 		throwInProgress: false,
-		bottle: createObj(this.xPos, this.yPos, 50, 50)
+		bottle: createObj(xPos, yPos, 50, 50)
 		// throwTime: (2 * this.jumpVelocity * Math.sin(this.throwVelocity)) / GRAVITY,
 		// jumpTime: (2 * this.jumpVelocity) / GRAVITY
 	};
@@ -233,10 +233,14 @@ function isColliding(obj1, obj2) {
 	return ((obj2.x - obj1.x + 10) < (obj1.width - 40) && (obj1.x - obj2.x + 40) < (obj2.width - 10)) && ((obj2.y - obj1.y + 10) < obj1.height);
 }
 
-drawLoop();
-updateLoop();
-//listenForTouches(player);
-listenForKeys(player);
+window.addEventListener("load", ()=>{
+	document.getElementById("load").classList.add("d-none");
+	cnv.classList.remove("d-none");
+	drawLoop();
+	updateLoop();
+	//listenForTouches(player);
+	listenForKeys(player);
+});
 
 /**
  * Adds all necessary touch listener events for user interaction with the GamePad Elements
