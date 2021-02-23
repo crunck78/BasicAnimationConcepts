@@ -1,4 +1,4 @@
-import { Game } from "./models/game.js"
+import { Game } from "/../models/game.js"
 
 /**
  * Reference to a div element used to log infos out.
@@ -238,92 +238,13 @@ function isColliding(obj1, obj2) {
 window.addEventListener("load", ()=>{
 	document.getElementById("load").classList.add("d-none");
 	cnv.classList.remove("d-none");
-	alert("works");
+	//alert("works");
 //	drawLoop();
 //	updateLoop();
 //	listenForTouches(player);
 //	listenForKeys(player);
 	const newGame = new Game();
 	newGame.draw();
-	
+	Game.listenForTouches();
+	Game.listenForKeys();
 });
-
-/**
- * Adds all necessary touch listener events for user interaction with the GamePad Elements
- * @param {{}} character - instance of the character the user is playing
- */
-function listenForTouches(character) {
-	document.getElementById("left-pad").addEventListener("touchstart", function (e) {
-		e.preventDefault();
-		character.isMovingLeft = true;
-		character.direction = LEFT;
-		player.requestMoveLeft = window.requestAnimationFrame(moveLeft);
-	});
-	document.getElementById("left-pad").addEventListener("touchend", function (e) {
-		e.preventDefault();
-		character.isMovingLeft = false;
-		window.cancelAnimationFrame(player.requestMoveLeft);
-		
-	});
-	document.getElementById("right-pad").addEventListener("touchstart", function (e) {
-		e.preventDefault();
-		character.isMovingRight = true;
-		character.direction = RIGHT;
-		player.requestMoveRight = window.requestAnimationFrame(moveRight);
-	});
-	document.getElementById("right-pad").addEventListener("touchend", function (e) {
-		e.preventDefault();
-		character.isMovingRight = false;
-		window.cancelAnimationFrame(player.requestMoveRight);
-	});
-	document.getElementById("jump-pad").addEventListener("touchstart", function (e) {
-		e.preventDefault();
-		if (!character.jumpInProgess)
-			window.requestAnimationFrame(jump);
-	});
-	document.getElementById("trow-pad").addEventListener("touchstart", function (e) {
-		e.preventDefault();
-		if (!character.throwInProgress){
-			character.bottle.initY = character.y;
-			window.requestAnimationFrame(throwBottle);
-		}
-	});
-}
-
-/**
- * Adds all KeyDown and KeyUp Listener events for the user interaction with the Keyboard
- * @param {{}} character - instance of the character the user is playing
- */
-function listenForKeys(character) {
-	document.addEventListener("keydown", function (e) {
-		const k = e.key;
-		if (e.code == "Space" && !character.jumpInProgess) {
-			window.requestAnimationFrame(jump);
-		}
-		if (k == "ArrowRight" && !character.isMovingRight) {
-			character.isMovingRight = true;
-			character.direction = RIGHT;
-			player.requestMoveRight = window.requestAnimationFrame(moveRight);
-		}
-		if (k == "ArrowLeft" && !character.isMovingLeft) {
-			character.isMovingLeft = true;
-			character.direction = LEFT;
-			player.requestMoveLeft = window.requestAnimationFrame(moveLeft);
-		}
-		if (k == "d" && !character.throwInProgress) {
-			character.bottle.initY = character.y;
-			window.requestAnimationFrame(throwBottle);
-		}
-	});
-	document.addEventListener("keyup", function (e) {
-		const k = e.key;
-		if (k == "ArrowRight" && character.isMovingRight) {
-			character.isMovingRight = false;
-			window.cancelAnimationFrame(player.requestMoveRight);
-		}
-		if (k == "ArrowLeft" && character.isMovingLeft) {
-			character.isMovingLeft = false;
-			window.cancelAnimationFrame(player.requestMoveLeft);
-		}
-	});
-}

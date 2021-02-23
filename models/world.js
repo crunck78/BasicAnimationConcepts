@@ -1,11 +1,12 @@
-import { Draw } from "draw.js"
-import { Character } from "character.js"
-import { Scene } from "scene.js"
-import { Enemy } from "enemy.js"
-import { Item } from "item.js"
+import { Draw } from "./draw.js"
+import { Character } from "./character.js"
+import { Scene } from "./scene.js"
+import { Enemy } from "./enemy.js"
+import { Item } from "./item.js"
 
 export class World extends Draw{
 	constructor(){
+		super();
 		this.pepe = new Character();
 		this.scenes = [];
 		for(let i = 0; i < 5; i++){
