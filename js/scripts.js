@@ -1,3 +1,5 @@
+import { Game } from "./models/game.js"
+
 /**
  * Reference to a div element used to log infos out.
  */
@@ -236,10 +238,14 @@ function isColliding(obj1, obj2) {
 window.addEventListener("load", ()=>{
 	document.getElementById("load").classList.add("d-none");
 	cnv.classList.remove("d-none");
-	drawLoop();
-	updateLoop();
-	//listenForTouches(player);
-	listenForKeys(player);
+	alert("works");
+//	drawLoop();
+//	updateLoop();
+//	listenForTouches(player);
+//	listenForKeys(player);
+	const newGame = new Game();
+	newGame.draw();
+	
 });
 
 /**
