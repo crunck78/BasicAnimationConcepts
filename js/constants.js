@@ -3,24 +3,6 @@
  */
 const LOG = document.getElementById("log");
 /**
- * Reference to the canvas element.
- */
-const CNV = document.getElementById("cnv");
-CNV.width = window.innerWidth - window.innerWidth * 0.1;
-CNV.height = window.innerHeight - window.innerHeight * 0.1;
-CNV.style.border = "3px solid black";
-
-/**
- * 2d rendering context to draw in the canvas.
- * @constant {CanvasRenderingContext2D}
- */
-const CTX = cnv.getContext("2d");
-
-/**
- * The y coordinate representing the ground level of the game.
- */
-const GROUND_POS = cnv.height - 150;
-/**
  * Index to access the right side character animations array.  
  */
 const RIGHT = 0;
@@ -34,4 +16,4 @@ const LEFT = 1;
  */
 const GRAVITY = 9.81 * 100;
 
-export { LOG, CNV, CTX, GROUND_POS, RIGHT, LEFT, GRAVITY };
+export { LOG, GROUND_POS, RIGHT, LEFT, GRAVITY };

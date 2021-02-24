@@ -1,6 +1,6 @@
 import { Draw } from "./draw.js"
-import { World } from "./world.js"
-//import { Canvas } from "/../js/canvas.js"
+import { World } from "./../models/world.js"
+//import { Canvas } from "./canvas.js"
 
 export class Game extends Draw {
 	constructor() {

@@ -1,5 +1,5 @@
 import { Model } from "./model.js"
-import { GROUND_POS, LEFT, RIGHT } from "/../js/constants.js"
+import { LEFT, RIGHT } from "./../js/constants.js"
 
 export class Item extends Model{
 	constructor(xPos, yPos, distance, scale, width, height){

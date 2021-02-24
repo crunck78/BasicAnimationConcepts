@@ -1,4 +1,4 @@
-import { Draw } from "./draw.js"
+import { Draw } from "./../js/draw.js"
 import { Character } from "./character.js"
 import { Scene } from "./scene.js"
 import { Enemy } from "./enemy.js"
@@ -21,6 +21,8 @@ export class World extends Draw{
 			this.items.push(new Item());
 		}
 	}
+	
+	static GROUND_POS = Draw.cnv.height - 150;
 
 	draw(){
 		Draw.drawElements(this.scenes);
@@ -37,5 +39,16 @@ export class World extends Draw{
 	 */
 	isColliding(obj1, obj2) {
 		return ((obj2.x - obj1.x + 10) < (obj1.width - 40) && (obj1.x - obj2.x + 40) < (obj2.width - 10)) && ((obj2.y - obj1.y + 10) < obj1.height);
+	}
+	
+	
+	/**
+	 * Draws a vertical visual reference Line as width as the canvas and at y = @GROUND_POS
+	 */
+	static drawGroundLine() {
+		Draw.ctx.beginPath();
+		Draw.ctx.moveTo(0, World.GROUND_POS);
+		Draw.ctx.lineTo(Draw.cnv.width, World.GROUND_POS);
+		Draw.ctx.stroke();
 	}
 }

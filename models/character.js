@@ -1,5 +1,5 @@
 import { Item } from "./item.js"
-import { GRAVITY } from "/../js/constants.js"
+import { GRAVITY } from "./../js/constants.js"
 
 export class Character extends Item{
 	constructor(xPos, yPos, distance, scale, width, height){

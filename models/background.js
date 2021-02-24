@@ -1,7 +1,7 @@
 import { Model } from "./model.js"
 
 export class Background extends Model{
-	constructor(){
-		super();
+	constructor(xPos, yPos, distance, scale, width, height){
+		super(xPos, yPos, distance, scale, width, height);
 	}
 }
