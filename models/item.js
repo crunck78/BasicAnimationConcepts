@@ -1,7 +1,15 @@
 import { Model } from "./model.js"
+import { GROUND_POS, LEFT, RIGHT } from "/../js/constants.js"
 
 export class Item extends Model{
-	constructor(){
-		super();
+	constructor(xPos, yPos, distance, scale, width, height){
+		super(xPos, yPos, distance, scale, width, height);
+		this.groundPos = GROUND_POS - height;
+		this.isMovingLeft = false;
+		this.isMovingRight = true;
+		this.movementSpeed = 5;
+		this.direction = RIGHT;
+		this.requestMoveRight = 0;
+		this.requestMoveLeft = 0;
 	}
 }

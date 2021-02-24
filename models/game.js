@@ -1,10 +1,13 @@
 import { Draw } from "./draw.js"
 import { World } from "./world.js"
+//import { Canvas } from "/../js/canvas.js"
 
 export class Game extends Draw {
 	constructor() {
 		super();
+		//Canvas.init();
 		this.level = new World();
+		this.startDraw;
 	}
 
 	/**
