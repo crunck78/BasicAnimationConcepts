@@ -16,4 +16,4 @@ const LEFT = 1;
  */
 const GRAVITY = 9.81 * 100;
 
-export { LOG, GROUND_POS, RIGHT, LEFT, GRAVITY };
+export { LOG, RIGHT, LEFT, GRAVITY };

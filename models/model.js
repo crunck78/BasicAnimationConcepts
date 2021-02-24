@@ -1,4 +1,4 @@
-import { Draw } from "./draw.js"
+import { Draw } from "./../js/draw.js"
 
 export class Model extends Draw{
    constructor(xPos, yPos, distance, scale, width, height) {
@@ -13,6 +13,6 @@ export class Model extends Draw{
    }
 	
 	draw(){
-		//Canvas.draw(this);
+		Draw.drawModelRect(this);
 	}
 }

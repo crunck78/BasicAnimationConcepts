@@ -21,8 +21,6 @@ export class World extends Draw{
 			this.items.push(new Item());
 		}
 	}
-	
-	static GROUND_POS = Draw.cnv.height - 150;
 
 	draw(){
 		Draw.drawElements(this.scenes);

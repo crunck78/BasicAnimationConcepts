@@ -11,6 +11,8 @@ export class Draw {
 	
 	static cnv;
 	static ctx;
+	static GROUND_POS;
+
 
 	static drawElements(elements) {
 		elements.forEach(element => {
@@ -39,9 +41,11 @@ export class Draw {
 	}
 
 	static init() {
-		Draw.cnv = document.getElementsByTagName["canvas"][0];
+		Draw.cnv = document.getElementsByTagName("canvas")[0];
+		Draw.cnv.classList.remove("d-none");
 		Draw.cnv.width = window.innerWidth;
-		Draw.cnv.height = window.height;
+		Draw.cnv.height = window.innerHeight;
 		Draw.ctx = Draw.cnv.getContext("2d");
+		Draw.GROUND_POS  = Draw.cnv.height - 150;
 	}
 }

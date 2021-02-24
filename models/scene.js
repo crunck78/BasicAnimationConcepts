@@ -1,4 +1,4 @@
-import { Draw } from "./draw.js"
+import { Draw } from "./../js/draw.js"
 import { Background } from "./background.js"
 
 export class Scene extends Draw{
