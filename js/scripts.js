@@ -1,13 +1,13 @@
-import { Draw } from "./draw.js";
+import { Draw } from "./draw.js"
 import { Game } from "./game.js"
+import { Log } from "./log.js"
 
 window.addEventListener("load", ()=>{
-	alert("works");
 	document.getElementById("load").classList.add("d-none");
+	document.getElementById("touchpad").classList.remove("d-none");
 	Draw.init();
-	
 	const newGame = new Game();
 	newGame.draw();
-	Game.listenForTouches();
-	Game.listenForKeys();
+	newGame.listenForTouches(newGame.level.pepe);
+	//newGame.listenForKeys();
 });

@@ -1,5 +1,13 @@
 export class Log{
     constructor(){
-        this.container = document.getElementById("log");
     }
+
+	static ctx = document.getElementById("log");
+	static print(msg){
+		Log.ctx.innerHTML += `${msg}<br>`;
+	}
+	
+	static clear(){
+		Log.ctx.innerHTML = '';
+	}
 }

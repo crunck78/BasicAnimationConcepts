@@ -7,22 +7,24 @@ import { Item } from "./item.js"
 export class World extends Draw{
 	constructor(){
 		super();
-		this.pepe = new Character();
+		this.pepe = new Character(10, Draw.GROUND_POS - 100, 1, 1, 150, 100, "blue");
 		this.scenes = [];
 		for (let i = 0; i < 5; i++){
 			this.scenes.push(new Scene());
 		}
 		this.enemies = [];
 		for (let i = 0; i < 5; i++){
-			this.enemies.push(new Enemy());
+			this.enemies.push(new Enemy((i+1)*100, Draw.GROUND_POS - 60, 1, 1, 60, 60, "red"));
 		}
 		this.items = [];
 		for (let i = 0; i < 5; i++){
-			this.items.push(new Item());
+			this.items.push(new Item((i+1)*150, Draw.GROUND_POS - 50, 1, 1, 50, 50, "green"));
 		}
 	}
 
 	draw(){
+		Draw.clearCanvas();
+		World.drawGroundLine();
 		Draw.drawElements(this.scenes);
 		Draw.drawElements(this.items);
 		Draw.drawElements(this.enemies);

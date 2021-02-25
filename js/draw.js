@@ -13,7 +13,6 @@ export class Draw {
 	static ctx;
 	static GROUND_POS;
 
-
 	static drawElements(elements) {
 		elements.forEach(element => {
 			element.draw();
@@ -24,10 +23,7 @@ export class Draw {
 	 * Used to clear The Canvas on repainting, should be called 1st, before any other draw calls.
 	 */
 	static clearCanvas() {
-		Draw.ctx.beginPath();
-		Draw.ctx.rect(0, 0, Draw.cnv.width, Draw.cnv.height);
-		Draw.fillStyle = "white";
-		Draw.ctx.fill();
+		Draw.ctx.clearRect(0, 0, Draw.cnv.width, Draw.cnv.height);
 	}
 
 	/**
@@ -37,15 +33,20 @@ export class Draw {
 	static drawModelRect(elm) {
 		Draw.ctx.beginPath();
 		Draw.ctx.rect(elm.x, elm.y, elm.width, elm.height);
+		Draw.ctx.fillStyle = `${elm.color}`;
+		Draw.ctx.fill();
 		Draw.ctx.stroke();
 	}
 
 	static init() {
-		Draw.cnv = document.getElementsByTagName("canvas")[0];
-		Draw.cnv.classList.remove("d-none");
-		Draw.cnv.width = window.innerWidth;
-		Draw.cnv.height = window.innerHeight;
-		Draw.ctx = Draw.cnv.getContext("2d");
-		Draw.GROUND_POS  = Draw.cnv.height - 150;
+		if(!Draw.cnv){
+			Draw.cnv = document.getElementsByTagName("canvas")[0];
+			Draw.cnv.style.border = `2px solid black`;
+			Draw.cnv.classList.remove("d-none");
+			Draw.cnv.width = window.innerWidth;
+			Draw.cnv.height = window.innerHeight;
+			Draw.ctx = Draw.cnv.getContext("2d");
+			Draw.GROUND_POS = Draw.cnv.height - 150;
+		}
 	}
 }

@@ -1,11 +1,13 @@
 import { Draw } from "./draw.js"
 import { World } from "./../models/world.js"
-//import { Canvas } from "./canvas.js"
+import { Log } from "./log.js"
 
 export class Game extends Draw {
+	
+	static gameInstance = 0;
 	constructor() {
+		Game.gameInstance++;
 		super();
-		//Canvas.init();
 		this.level = new World();
 		this.startDraw;
 	}
@@ -17,44 +19,49 @@ export class Game extends Draw {
 		this.level.draw();
 		requestAnimationFrame(this.draw.bind(this));
 	}
+	
+	/**
+	* UpdateLoop
+	*/
+	
 
 	/**
 	 * Adds all necessary touch listener events for user interaction with the GamePad Elements
 	 */
-	static listenForTouches() {
+	listenForTouches(pepe) {
 		document.getElementById("left-pad").addEventListener("touchstart", function (e) {
 			e.preventDefault();
-			this.level.pepe.isMovingLeft = true;
-			this.level.pepe.direction = LEFT;
-			this.level.pepe.requestMoveLeft = window.requestAnimationFrame(moveLeft);
+			pepe.isMovingLeft = true;
+			pepe.direction = LEFT;
+			pepe.requestMoveLeft = window.requestAnimationFrame(moveLeft);
 		});
 		document.getElementById("left-pad").addEventListener("touchend", function (e) {
 			e.preventDefault();
-			this.level.pepe.isMovingLeft = false;
-			window.cancelAnimationFrame(this.level.pepe.requestMoveLeft);
+			pepe.isMovingLeft = false;
+			window.cancelAnimationFrame(pepe.requestMoveLeft);
 
 		});
 		document.getElementById("right-pad").addEventListener("touchstart", function (e) {
 			e.preventDefault();
-			this.level.pepe.isMovingRight = true;
-			this.level.pepe.direction = RIGHT;
-			this.level.pepe.requestMoveRight = window.requestAnimationFrame(moveRight);
+			pepe.isMovingRight = true;
+			pepe.direction = RIGHT;
+			pepe.requestMoveRight = window.requestAnimationFrame(moveRight);
 		});
 		document.getElementById("right-pad").addEventListener("touchend", function (e) {
 			e.preventDefault();
-			this.level.pepe.isMovingRight = false;
-			window.cancelAnimationFrame(this.level.pepe.requestMoveRight);
+			pepe.isMovingRight = false;
+			window.cancelAnimationFrame(pepe.requestMoveRight);
 		});
 		document.getElementById("jump-pad").addEventListener("touchstart", function (e) {
 			e.preventDefault();
-			if (!this.level.pepe.jumpInProgess)
-				window.requestAnimationFrame(jump);
+			if (!pepe.jumpInProgess)
+				window.requestAnimationFrame(pepe.jump.bind(pepe));
 		});
 		document.getElementById("trow-pad").addEventListener("touchstart", function (e) {
 			e.preventDefault();
-			if (!this.level.pepe.throwInProgress) {
-				this.level.pepe.bottle.initY = this.level.pepe.y;
-				window.requestAnimationFrame(throwBottle);
+			if (!pepe.throwInProgress) {
+				pepe.bottle.initY = pepe.y;
+				window.requestAnimationFrame(pepe.throwBottle.bind(pepe));
 			}
 		});
 	}
@@ -62,36 +69,36 @@ export class Game extends Draw {
 	/**
 	 * Adds all KeyDown and KeyUp Listener events for the user interaction with the Keyboard
 	 */
-	static listenForKeys() {
+	listenForKeys(pepe) {
 		document.addEventListener("keydown", function (e) {
 			const k = e.key;
-			if (e.code == "Space" && !this.level.pepe.jumpInProgess) {
-				window.requestAnimationFrame(jump);
+			if (e.code == "Space" && !pepe.jumpInProgess) {
+				window.requestAnimationFrame(pepe.jump.bind(pepe));
 			}
-			if (k == "ArrowRight" && !this.level.pepe.isMovingRight) {
-				this.level.pepe.isMovingRight = true;
-				this.level.pepe.direction = RIGHT;
-				this.level.pepe.requestMoveRight = window.requestAnimationFrame(moveRight);
+			if (k == "ArrowRight" && !pepe.isMovingRight) {
+				pepe.isMovingRight = true;
+				pepe.direction = RIGHT;
+				pepe.requestMoveRight = window.requestAnimationFrame(moveRight);
 			}
-			if (k == "ArrowLeft" && !this.level.pepe.isMovingLeft) {
-				this.level.pepe.isMovingLeft = true;
-				this.level.pepe.direction = LEFT;
-				this.level.pepe.requestMoveLeft = window.requestAnimationFrame(moveLeft);
+			if (k == "ArrowLeft" && !pepe.isMovingLeft) {
+				pepe.isMovingLeft = true;
+				pepe.direction = LEFT;
+				pepe.requestMoveLeft = window.requestAnimationFrame(moveLeft);
 			}
-			if (k == "d" && !this.level.pepe.throwInProgress) {
-				this.level.pepe.bottle.initY = this.level.pepe.y;
-				window.requestAnimationFrame(throwBottle);
+			if (k == "d" && !pepe.throwInProgress) {
+				pepe.bottle.initY = pepe.y;
+				window.requestAnimationFrame(pepe.throwBottle.bind(pepe));
 			}
 		});
 		document.addEventListener("keyup", function (e) {
 			const k = e.key;
-			if (k == "ArrowRight" && this.level.pepe.isMovingRight) {
-				this.level.pepe.isMovingRight = false;
-				window.cancelAnimationFrame(this.level.pepe.requestMoveRight);
+			if (k == "ArrowRight" && pepe.isMovingRight) {
+				pepe.isMovingRight = false;
+				window.cancelAnimationFrame(pepe.requestMoveRight);
 			}
-			if (k == "ArrowLeft" && this.level.pepe.isMovingLeft) {
-				this.level.pepe.isMovingLeft = false;
-				window.cancelAnimationFrame(this.level.pepe.requestMoveLeft);
+			if (k == "ArrowLeft" && pepe.isMovingLeft) {
+				pepe.isMovingLeft = false;
+				window.cancelAnimationFrame(pepe.requestMoveLeft);
 			}
 		});
 	}

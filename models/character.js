@@ -1,9 +1,10 @@
 import { Item } from "./item.js"
 import { GRAVITY } from "./../js/constants.js"
+import { Log } from "./../js/log.js"
 
 export class Character extends Item{
-	constructor(xPos, yPos, distance, scale, width, height){
-		super(xPos, yPos, distance, scale, width, height);
+	constructor(xPos, yPos, distance, scale, width, height, color){
+		super(xPos, yPos, distance, scale, width, height, color);
 		this.startJump;
 		this.startThrow;
 		this.jumpInProgess = false;
@@ -11,7 +12,7 @@ export class Character extends Item{
 		this.throwInProgress = false;
 		this.throwVelocity = -98.1 * 10;
 		this.throwAngle = 0.78539816; //Radians -> 45 Degrees
-		this.bottle = new Item();
+		this.bottle = new Item(xPos, yPos, distance, scale, 50, 50, "yellow");
 		this.bottle.initY = this.y;
 		this.bottles = [];
 		this.coins = [];
@@ -45,6 +46,7 @@ export class Character extends Item{
 		const elapse = (timeStamp - this.startThrow) / 1000; //SECONDS
 		this.bottle.x = this.x + (-this.throwVelocity * Math.cos(this.throwAngle) * elapse); // x = xinit + (vinit * cos(angle)*changeInTime)
 		this.bottle.y = (this.throwVelocity * Math.sin(this.throwAngle) * elapse) + (0.5 * GRAVITY * Math.pow(elapse, 2)) + this.bottle.initY; // y= v*sin(angle)*deltaTime + 1/2*accel(Constant)*t^2 + yinit
+		this.bottle.draw();
 		if ((this.bottle.y == this.bottle.initY && elapse == 0) || (elapse > 0 && this.bottle.y < this.bottle.groundPos)){ // if first animation frame, or not last aniamtion frame
 			this.throwInProgress = true;
 			requestAnimationFrame(this.throwBottle.bind(this));

@@ -3,8 +3,8 @@ import { LEFT, RIGHT } from "./../js/constants.js"
 import { Draw } from "./../js/draw.js"
 
 export class Item extends Model{
-	constructor(xPos, yPos, distance, scale, width, height){
-		super(xPos, yPos, distance, scale, width, height);
+	constructor(xPos, yPos, distance, scale, width, height, color){
+		super(xPos, yPos, distance, scale, width, height, color);
 		this.groundPos = Draw.GROUND_POS - height;
 		this.isMovingLeft = false;
 		this.isMovingRight = true;
