@@ -1,15 +1,19 @@
 import { Draw } from "./draw.js"
 import { World } from "./../models/world.js"
+import { LEFT, RIGHT } from "./constants.js"
 import { Log } from "./log.js"
 
 export class Game extends Draw {
 	
-	static gameInstance = 0;
+	static gameInstances = 0;
+	static requestMoveLeft;
+	static requestMoveRight;
 	constructor() {
-		Game.gameInstance++;
+		Game.gameInstances++;
 		super();
 		this.level = new World();
-		this.startDraw;
+		//this.startDraw;
+
 	}
 
 	/**
@@ -23,34 +27,50 @@ export class Game extends Draw {
 	/**
 	* UpdateLoop
 	*/
+
+	/**
+	 * 
+	 */
+	static moveLeft(){
+		console.log("Moving left");
+		Game.requestMoveLeft = requestAnimationFrame(Game.moveLeft);
+	}
 	
+	/**
+	 * 
+	 */
+	static moveRight(){
+		console.log("Moving right");
+		Game.requestMoveRight = requestAnimationFrame(Game.moveRight);
+	}
 
 	/**
 	 * Adds all necessary touch listener events for user interaction with the GamePad Elements
+	 * @param {*} pepe
 	 */
 	listenForTouches(pepe) {
 		document.getElementById("left-pad").addEventListener("touchstart", function (e) {
 			e.preventDefault();
 			pepe.isMovingLeft = true;
 			pepe.direction = LEFT;
-			pepe.requestMoveLeft = window.requestAnimationFrame(moveLeft);
+			Game.requestMoveLeft = window.requestAnimationFrame(Game.moveLeft);
 		});
 		document.getElementById("left-pad").addEventListener("touchend", function (e) {
 			e.preventDefault();
 			pepe.isMovingLeft = false;
-			window.cancelAnimationFrame(pepe.requestMoveLeft);
+			window.cancelAnimationFrame(Game.requestMoveLeft);
 
 		});
 		document.getElementById("right-pad").addEventListener("touchstart", function (e) {
 			e.preventDefault();
 			pepe.isMovingRight = true;
 			pepe.direction = RIGHT;
-			pepe.requestMoveRight = window.requestAnimationFrame(moveRight);
+			Game.requestMoveRight = window.requestAnimationFrame(Game.moveRight);
 		});
 		document.getElementById("right-pad").addEventListener("touchend", function (e) {
 			e.preventDefault();
 			pepe.isMovingRight = false;
-			window.cancelAnimationFrame(pepe.requestMoveRight);
+			window.cancelAnimationFrame(Game.requestMoveRight);
 		});
 		document.getElementById("jump-pad").addEventListener("touchstart", function (e) {
 			e.preventDefault();
@@ -78,12 +98,12 @@ export class Game extends Draw {
 			if (k == "ArrowRight" && !pepe.isMovingRight) {
 				pepe.isMovingRight = true;
 				pepe.direction = RIGHT;
-				pepe.requestMoveRight = window.requestAnimationFrame(moveRight);
+				Game.requestMoveRight = window.requestAnimationFrame(Game.moveRight);
 			}
 			if (k == "ArrowLeft" && !pepe.isMovingLeft) {
 				pepe.isMovingLeft = true;
 				pepe.direction = LEFT;
-				pepe.requestMoveLeft = window.requestAnimationFrame(moveLeft);
+				Game.requestMoveLeft = window.requestAnimationFrame(Game.moveLeft);
 			}
 			if (k == "d" && !pepe.throwInProgress) {
 				pepe.bottle.initY = pepe.y;
@@ -94,11 +114,11 @@ export class Game extends Draw {
 			const k = e.key;
 			if (k == "ArrowRight" && pepe.isMovingRight) {
 				pepe.isMovingRight = false;
-				window.cancelAnimationFrame(pepe.requestMoveRight);
+				window.cancelAnimationFrame(Game.requestMoveRight);
 			}
 			if (k == "ArrowLeft" && pepe.isMovingLeft) {
 				pepe.isMovingLeft = false;
-				window.cancelAnimationFrame(pepe.requestMoveLeft);
+				window.cancelAnimationFrame(Game.requestMoveLeft);
 			}
 		});
 	}

@@ -32,6 +32,10 @@ export class World extends Draw{
 	}
 
 	/**
+	 * 
+	 */
+
+	/**
 	 * Returns true or false if the arguments objects in game collide
 	 * @param {Model} obj1 - 
 	 * @param {Model} obj2 -

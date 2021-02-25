@@ -8,6 +8,6 @@ window.addEventListener("load", ()=>{
 	Draw.init();
 	const newGame = new Game();
 	newGame.draw();
-	newGame.listenForTouches(newGame.level.pepe);
-	//newGame.listenForKeys();
+	//newGame.listenForTouches(newGame.level.pepe);
+	newGame.listenForKeys(newGame.level.pepe);
 });
