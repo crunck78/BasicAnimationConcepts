@@ -16,4 +16,12 @@ export class Model extends Draw{
 	draw(){
 		Draw.drawModelRect(this);
 	}
+	
+	moveLeft(){
+		
+	}
+	
+	moveRight(){
+		
+	}
 }

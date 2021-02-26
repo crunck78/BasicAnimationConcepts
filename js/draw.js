@@ -9,6 +9,14 @@ export class Draw {
 		throw new TypeError("Methode has no implementation!");
 	}
 	
+	moveLeft() {
+		throw new TypeError("Methode has no implementation!");
+	}
+	
+	moveRight() {
+		throw new TypeError("Methode has no implementation!");
+	}
+	
 	static cnv;
 	static ctx;
 	static GROUND_POS;
@@ -16,6 +24,18 @@ export class Draw {
 	static drawElements(elements) {
 		elements.forEach(element => {
 			element.draw();
+		});
+	}
+	
+	static moveElementsRight(elements, movementSpeed) {
+		elements.forEach(element => {
+			element.x -= movementSpeed * element.distance;
+		});
+	}
+	
+	static moveElementsLeft(elements, movementSpeed) {
+		elements.forEach(element => {
+			element.x += movementSpeed * element.distance;
 		});
 	}
 	

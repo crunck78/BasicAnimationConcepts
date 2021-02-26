@@ -5,15 +5,14 @@ import { Log } from "./log.js"
 
 export class Game extends Draw {
 	
-	static gameInstances = 0;
+	//static gameInstances = 0;
 	static requestMoveLeft;
 	static requestMoveRight;
 	constructor() {
-		Game.gameInstances++;
+		//Game.gameInstances++;
 		super();
 		this.level = new World();
 		//this.startDraw;
-
 	}
 
 	/**
@@ -31,29 +30,31 @@ export class Game extends Draw {
 	/**
 	 * 
 	 */
-	static moveLeft(){
-		console.log("Moving left");
-		Game.requestMoveLeft = requestAnimationFrame(Game.moveLeft);
+	moveLeft(){
+		this.level.moveLeft();
+		//Log.print("Moving left");
+		Game.requestMoveLeft = requestAnimationFrame(this.moveLeft.bind(this));
 	}
 	
 	/**
 	 * 
 	 */
-	static moveRight(){
-		console.log("Moving right");
-		Game.requestMoveRight = requestAnimationFrame(Game.moveRight);
+	moveRight(){
+		this.level.moveRight();
+		//Log.print("Moving right");
+		Game.requestMoveRight = requestAnimationFrame(this.moveRight.bind(this));
 	}
 
 	/**
 	 * Adds all necessary touch listener events for user interaction with the GamePad Elements
 	 * @param {*} pepe
 	 */
-	listenForTouches(pepe) {
+	listenForTouches(pepe, game) {
 		document.getElementById("left-pad").addEventListener("touchstart", function (e) {
 			e.preventDefault();
 			pepe.isMovingLeft = true;
 			pepe.direction = LEFT;
-			Game.requestMoveLeft = window.requestAnimationFrame(Game.moveLeft);
+			Game.requestMoveLeft = window.requestAnimationFrame(game.moveLeft.bind(game));
 		});
 		document.getElementById("left-pad").addEventListener("touchend", function (e) {
 			e.preventDefault();
@@ -65,7 +66,7 @@ export class Game extends Draw {
 			e.preventDefault();
 			pepe.isMovingRight = true;
 			pepe.direction = RIGHT;
-			Game.requestMoveRight = window.requestAnimationFrame(Game.moveRight);
+			Game.requestMoveRight = window.requestAnimationFrame(game.moveRight.bind(game));
 		});
 		document.getElementById("right-pad").addEventListener("touchend", function (e) {
 			e.preventDefault();
@@ -98,12 +99,12 @@ export class Game extends Draw {
 			if (k == "ArrowRight" && !pepe.isMovingRight) {
 				pepe.isMovingRight = true;
 				pepe.direction = RIGHT;
-				Game.requestMoveRight = window.requestAnimationFrame(Game.moveRight);
+				Game.requestMoveRight = window.requestAnimationFrame(game.moveRight.bind(game));
 			}
 			if (k == "ArrowLeft" && !pepe.isMovingLeft) {
 				pepe.isMovingLeft = true;
 				pepe.direction = LEFT;
-				Game.requestMoveLeft = window.requestAnimationFrame(Game.moveLeft);
+				Game.requestMoveLeft = window.requestAnimationFrame(game.moveLeft.bind(game));
 			}
 			if (k == "d" && !pepe.throwInProgress) {
 				pepe.bottle.initY = pepe.y;

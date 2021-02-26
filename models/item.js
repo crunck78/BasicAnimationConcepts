@@ -8,9 +8,12 @@ export class Item extends Model{
 		this.groundPos = Draw.GROUND_POS - height;
 		this.isMovingLeft = false;
 		this.isMovingRight = true;
-		this.movementSpeed = 5;
+		this.movementSpeed = 2;
 		this.direction = RIGHT;
 		this.requestMoveRight = 0;
 		this.requestMoveLeft = 0;
+		this.animations = [];
 	}
+	
+	
 }

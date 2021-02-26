@@ -34,6 +34,20 @@ export class World extends Draw{
 	/**
 	 * 
 	 */
+	 moveLeft(){
+		 Draw.moveElementsLeft(this.scenes, this.pepe.movementSpeed);
+		 Draw.moveElementsLeft(this.items, this.pepe.movementSpeed);
+		 Draw.moveElementsLeft(this.enemies, this.pepe.movementSpeed);
+	 }
+	 
+	 /**
+	 *
+	 */
+	 moveRight(){
+		 Draw.moveElementsRight(this.scenes, this.pepe.movementSpeed);
+		 Draw.moveElementsRight(this.items, this.pepe.movementSpeed);
+		 Draw.moveElementsRight(this.enemies, this.pepe.movementSpeed);
+	 }
 
 	/**
 	 * Returns true or false if the arguments objects in game collide
@@ -47,7 +61,7 @@ export class World extends Draw{
 	
 	
 	/**
-	 * Draws a vertical visual reference Line as width as the canvas and at y = @GROUND_POS
+	 * Draws a vertical visual reference Line as width of the canvas and at y = @GROUND_POS
 	 */
 	static drawGroundLine() {
 		Draw.ctx.beginPath();
