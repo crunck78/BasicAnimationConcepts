@@ -2,6 +2,7 @@ import { Draw } from "./draw.js"
 import { World } from "./../models/world.js"
 import { LEFT, RIGHT } from "./constants.js"
 import { Log } from "./log.js"
+import { Character } from "../models/character.js";
 
 export class Game extends Draw {
 	
@@ -12,6 +13,7 @@ export class Game extends Draw {
 		//Game.gameInstances++;
 		super();
 		this.level = new World();
+		//this.touchPadCont;
 		//this.startDraw;
 	}
 
@@ -47,7 +49,9 @@ export class Game extends Draw {
 
 	/**
 	 * Adds all necessary touch listener events for user interaction with the GamePad Elements
-	 * @param {*} pepe
+	 * @param {Character} pepe
+	 * @param {Game} game
+	 * 
 	 */
 	listenForTouches(pepe, game) {
 		document.getElementById("left-pad").addEventListener("touchstart", function (e) {
@@ -90,7 +94,7 @@ export class Game extends Draw {
 	/**
 	 * Adds all KeyDown and KeyUp Listener events for the user interaction with the Keyboard
 	 */
-	listenForKeys(pepe) {
+	listenForKeys(pepe, game) {
 		document.addEventListener("keydown", function (e) {
 			const k = e.key;
 			if (e.code == "Space" && !pepe.jumpInProgess) {

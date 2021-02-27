@@ -9,8 +9,8 @@ export class World extends Draw{
 		super();
 		this.pepe = new Character(10, Draw.GROUND_POS - 100, 1, 1, 150, 100, "blue");
 		this.scenes = [];
-		for (let i = 0; i < 5; i++){
-			this.scenes.push(new Scene());
+		for (let i = 0; i < 2; i++){
+			this.scenes.push(new Scene(i));
 		}
 		this.enemies = [];
 		for (let i = 0; i < 5; i++){

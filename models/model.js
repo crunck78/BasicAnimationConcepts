@@ -14,14 +14,18 @@ export class Model extends Draw{
    }
 	
 	draw(){
-		Draw.drawModelRect(this);
+		if(this.currentImg && this.currentImg.complete){
+			Draw.ctx.drawImage(this.currentImg, this.x, this.y, this.width, this.height);
+		}
+		else
+			Draw.drawModelRect(this);
 	}
 	
-	moveLeft(){
-		
+	moveLeft(movementSpeed){
+		this.x += movementSpeed * this.distance;
 	}
 	
-	moveRight(){
-		
+	moveRight(movementSpeed){
+		this.x -= movementSpeed * this.distance;
 	}
 }

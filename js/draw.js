@@ -29,13 +29,15 @@ export class Draw {
 	
 	static moveElementsRight(elements, movementSpeed) {
 		elements.forEach(element => {
-			element.x -= movementSpeed * element.distance;
+			//element.x -= movementSpeed * element.distance;
+			element.moveRight(movementSpeed);
 		});
 	}
 	
 	static moveElementsLeft(elements, movementSpeed) {
 		elements.forEach(element => {
-			element.x += movementSpeed * element.distance;
+			// element.x += movementSpeed * element.distance;
+			element.moveLeft(movementSpeed);
 		});
 	}
 	
