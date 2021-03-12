@@ -7,7 +7,17 @@ import { Character } from "../models/character.js";
 export class Game extends Draw {
 	
 	//static gameInstances = 0;
+	/**
+	 * Holds the requestAnimationFrame index to Game.moveLeft, used to cancel the requestAnimationFrame.
+	 * ( See Game.listenForKeys and Game.listenForTouches )
+	 * @type number
+	 */
 	static requestMoveLeft;
+	/**
+	 * Holds the requestAnimationFrame index to Game.moveRight, used to cancel the requestAnimationFrame.
+	 * ( See Game.listenForKeys and Game.listenForTouches )
+	 * @type number
+	 */
 	static requestMoveRight;
 	constructor() {
 		//Game.gameInstances++;
@@ -28,9 +38,15 @@ export class Game extends Draw {
 	/**
 	* UpdateLoop
 	*/
+	updateLoop(){
+		this.level.update();
+		requestAnimationFrame(this.updateLoop.bind(this));
+	}
 
 	/**
-	 * 
+	 * Keeps issuing the moveLeft methode of World's instance and 
+	 * updates the Game.requestMoveLeft static member, as long as request animation frame is not canceled.
+	 * ( See Game.listenForKeys and Game.listenForTouches for usage and cancelation. )
 	 */
 	moveLeft(){
 		this.level.moveLeft();
@@ -39,7 +55,9 @@ export class Game extends Draw {
 	}
 	
 	/**
-	 * 
+	 * Keeps issuing the moveRight methode of World's instance and 
+	 * updates the Game.requestMoveRight static member, as long as request animation frame is not canceled.
+	 * ( See Game.listenForKeys and Game.listenForTouches for usage and cancelation )
 	 */
 	moveRight(){
 		this.level.moveRight();
@@ -51,7 +69,6 @@ export class Game extends Draw {
 	 * Adds all necessary touch listener events for user interaction with the GamePad Elements
 	 * @param {Character} pepe
 	 * @param {Game} game
-	 * 
 	 */
 	listenForTouches(pepe, game) {
 		document.getElementById("left-pad").addEventListener("touchstart", function (e) {
@@ -92,7 +109,9 @@ export class Game extends Draw {
 	}
 
 	/**
-	 * Adds all KeyDown and KeyUp Listener events for the user interaction with the Keyboard
+	 * Adds all KeyDown and KeyUp Listener events for the user interaction with the Keyboard.
+	 * @param {Character} pepe
+	 * @param {Game} game
 	 */
 	listenForKeys(pepe, game) {
 		document.addEventListener("keydown", function (e) {

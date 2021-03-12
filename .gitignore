@@ -3,5 +3,5 @@ gen/
 obj/
 libs/*/*.so
 .vscode/*
-img/*
+img/
 

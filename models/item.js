@@ -14,6 +14,5 @@ export class Item extends Model{
 		this.requestMoveLeft = 0;
 		this.animations = [];
 	}
-	
-	
+
 }

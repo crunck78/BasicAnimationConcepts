@@ -1,3 +1,6 @@
+import { Model } from "../models/model";
+import { Scene } from "../models/scene";
+
 export class Draw {
 	constructor() {
 		if (new.target === Draw) {
@@ -5,28 +8,59 @@ export class Draw {
 		}
 	}
 
+	/**
+	 * Abstract methode. Implemented by the Child Class
+	 */
 	draw() {
 		throw new TypeError("Methode has no implementation!");
 	}
 	
+	/**
+	 * Abstract methode. Implemented by the Child Class
+	 */
 	moveLeft() {
 		throw new TypeError("Methode has no implementation!");
 	}
 	
+	/**
+	 * Abstract methode. Implemented by the Child Class
+	 */
 	moveRight() {
 		throw new TypeError("Methode has no implementation!");
 	}
 	
-	static cnv;
+	/**
+	 * Holds the first Canvas of the DOM
+	 * @type HTMLCanvasElement
+	 */
+	static cnv ;
+	/**
+	 * Holds the 2d Context of the Canvas.
+	 * @type CanvasRenderingContext2D
+	 */
 	static ctx;
+	/**
+	 * Holds a the Ground Position of the Game.
+	 * @type number
+	 */
 	static GROUND_POS;
 
+	/**
+	 * Issues the draw call of an Array of Model or Scene instances.
+	 * @param {Model[] | Scene[]} elements 
+	 */
 	static drawElements(elements) {
 		elements.forEach(element => {
 			element.draw();
 		});
 	}
 	
+	/**
+	 *  Iterates an Array of Models or Scenes and move each Model to the right by a given speed
+	 * 
+	 * @param {Model[] | Scene[]} elements 
+	 * @param {number} movementSpeed 
+	 */
 	static moveElementsRight(elements, movementSpeed) {
 		elements.forEach(element => {
 			//element.x -= movementSpeed * element.distance;
@@ -34,6 +68,12 @@ export class Draw {
 		});
 	}
 	
+	/**
+	 * Iterates an Array of Models or Scenes and move each to the left by a given speed
+	 * 
+	 * @param {Model[] | Scene[]} elements 
+	 * @param {number} movementSpeed 
+	 */
 	static moveElementsLeft(elements, movementSpeed) {
 		elements.forEach(element => {
 			// element.x += movementSpeed * element.distance;
@@ -60,6 +100,9 @@ export class Draw {
 		Draw.ctx.stroke();
 	}
 
+	/**
+	 * Initialize static members of Draw. cnv, ctx and GROUND_POS 
+	 */
 	static init() {
 		if(!Draw.cnv){
 			Draw.cnv = document.getElementsByTagName("canvas")[0];
