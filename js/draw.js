@@ -1,5 +1,5 @@
-import { Model } from "../models/model";
-import { Scene } from "../models/scene";
+// import { Model } from "../models/model.js";
+// import { Scene } from "../models/scene.js";
 
 export class Draw {
 	constructor() {
@@ -14,6 +14,14 @@ export class Draw {
 	draw() {
 		throw new TypeError("Methode has no implementation!");
 	}
+
+	/**
+	 * Abstract methode. Implemented by the Child Class
+	 */
+	 update() {
+		throw new TypeError("Methode has no implementation!");
+	}
+	
 	
 	/**
 	 * Abstract methode. Implemented by the Child Class
@@ -93,11 +101,13 @@ export class Draw {
 	 * @param {Model} elm - element to draw a rectangle using its fields values {x: number, y: number , width: number, height: number}
 	 */
 	static drawModelRect(elm) {
+		Draw.ctx.save();
 		Draw.ctx.beginPath();
-		Draw.ctx.rect(elm.x, elm.y, elm.width, elm.height);
+		Draw.ctx.rect(elm.x * elm.direction, elm.y, elm.width * elm.direction, elm.height);
 		Draw.ctx.fillStyle = `${elm.color}`;
 		Draw.ctx.fill();
-		Draw.ctx.stroke();
+		//Draw.ctx.stroke();
+		Draw.ctx.restore();
 	}
 
 	/**
@@ -106,12 +116,12 @@ export class Draw {
 	static init() {
 		if(!Draw.cnv){
 			Draw.cnv = document.getElementsByTagName("canvas")[0];
-			Draw.cnv.style.border = `2px solid black`;
+			//Draw.cnv.style.border = `2px solid black`;
 			Draw.cnv.classList.remove("d-none");
 			Draw.cnv.width = window.innerWidth;
 			Draw.cnv.height = window.innerHeight;
 			Draw.ctx = Draw.cnv.getContext("2d");
-			Draw.GROUND_POS = Draw.cnv.height - 150;
+			Draw.GROUND_POS = Draw.cnv.height - 90;
 		}
 	}
 }
