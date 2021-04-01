@@ -73,6 +73,7 @@ async function createAnimations(array) {
     await asyncForEach(array, async (imgSrc) => {
         let img = new Image();
         let response = await fetch(imgSrc);
+        console.log(response);
         let imgBlob = await response.blob();
         let objectURL = URL.createObjectURL(imgBlob);
         img.src = objectURL;
