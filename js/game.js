@@ -51,8 +51,15 @@ export class Game extends Draw {
 	 */
 	moveLeft(timeStamp) {
 		if (this.level.worldLeftEdge.x >= 0) {
-			if (!Game.isColliding(this.level.pepe, this.level.worldLeftEdge)) 
+			if (!Game.isColliding(this.level.pepe, this.level.worldLeftEdge)) {
 				this.level.pepe.moveRight(this.level.pepe.movementSpeed);
+			}
+		} else if (this.level.worldRightEdge.x <= Draw.cnv.width) {
+			if (!Game.isColliding(this.level.pepe, this.level.worldCenter)) {
+				this.level.pepe.moveRight(this.level.pepe.movementSpeed);
+			}else{
+				this.level.moveLeft(timeStamp);
+			}
 		} else {
 			this.level.moveLeft(timeStamp);
 		}
@@ -68,11 +75,12 @@ export class Game extends Draw {
 			if (!Game.isColliding(this.level.pepe, this.level.worldCenter)) {
 				this.level.pepe.moveLeft(this.level.pepe.movementSpeed);
 			} else {
-				if(this.level.worldRightEdge.x >= Draw.cnv.width)
+				if (this.level.worldRightEdge.x >= Draw.cnv.width)
 					this.level.moveRight(timeStamp);
-					else{
+				else {
+					if (!Game.isColliding(this.level.pepe, this.level.worldRightEdge))
 						this.level.pepe.moveLeft(this.level.pepe.movementSpeed);
-					}
+				}
 			}
 		}
 		Game.requestMoveRight = requestAnimationFrame(this.moveRight.bind(this));
