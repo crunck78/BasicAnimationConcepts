@@ -44,7 +44,7 @@ export class Character extends Item {
 		if (this.startThrow === undefined || !this.throwInProgress)
 			this.startThrow = timeStamp; //throw start animation
 		const elapse = (timeStamp - this.startThrow) / 1000; //SECONDS
-		this.bottle.x = (this.x + (-this.throwVelocity * Math.cos(this.throwAngle) * elapse)); // x = xinit + (vinit * cos(angle)*changeInTime)
+		this.bottle.x = (this.bottle.initX + (-this.throwVelocity * this.bottle.direction * Math.cos(this.throwAngle) * elapse)); // x = xinit + (vinit * cos(angle)*changeInTime)
 		this.bottle.y = (this.throwVelocity * Math.sin(this.throwAngle) * elapse) + (0.5 * GRAVITY * Math.pow(elapse, 2)) + this.bottle.initY; // y= v*sin(angle)*deltaTime + 1/2*accel(Constant)*t^2 + yinit
 		this.bottle.update(timeStamp);
 		this.bottle.draw();

@@ -161,6 +161,8 @@ export class Game extends Draw {
 			}
 			if (k == "d" && !pepe.throwInProgress) {
 				pepe.bottle.initY = pepe.y;
+				pepe.bottle.initX = pepe.x;
+				pepe.bottle.direction = pepe.direction;
 				window.requestAnimationFrame(pepe.throwBottle.bind(pepe));
 			}
 		});
