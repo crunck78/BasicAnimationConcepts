@@ -188,4 +188,13 @@ export class Game extends Draw {
 			}
 		});
 	}
+
+	checkForCollisions(timeStamp){
+		//We check for collisions pre animation frame
+		//collisions types player <-> enemy, collectibles( coins, bottles ), materials( world edges, groundline, platforms )
+		// player <-> enemy if collision happens from above  kill enemy, else hurt player
+		// player <-> collectibles on collision all types delete collectible
+		// player <-> platforms if collision happens from above player.groundPos = platform.y
+		requestAnimationFrame(this.checkForCollisions.bind(this));
+	}
 }

@@ -52,7 +52,7 @@ export class World extends Draw {
 	update(timeStamp) {
 		this.pepe.setStatus(this.pepe.status);
 		this.pepe.update(timeStamp);
-		Draw.moveElementsRight(this.enemies, this.enemies[0].movementSpeed);
+		Draw.moveElementsRight(this.enemies);
 	}
 
 	/**

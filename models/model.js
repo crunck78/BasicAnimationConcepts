@@ -1,5 +1,6 @@
 import { RIGHT_DIRECTION, WIREFRAME_ON, WIREFRAME_OFF } from "../js/constants.js";
 import { Draw } from "./../js/draw.js"
+//import { Enemy } from "./enemy.js";
 
 export class Model extends Draw {
 	constructor(xPos, yPos, distance, scale, width, height, color) {
@@ -46,7 +47,7 @@ export class Model extends Draw {
 	 * @param {number} movementSpeed 
 	 */
 	moveLeft(movementSpeed) {
-		this.x += (movementSpeed * this.distance);
+		this.x += movementSpeed? (movementSpeed * this.distance) : (this.movementSpeed * this.distance);
 	}
 
 	/**
@@ -55,7 +56,7 @@ export class Model extends Draw {
 	 * @param {number} movementSpeed 
 	 */
 	moveRight(movementSpeed) {
-		this.x -= (movementSpeed * this.distance);
+		this.x -= movementSpeed? (movementSpeed * this.distance) : (this.movementSpeed * this.distance);
 	}
 
 	/**
