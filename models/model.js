@@ -1,6 +1,5 @@
 import { RIGHT_DIRECTION, WIREFRAME_ON, WIREFRAME_OFF } from "../js/constants.js";
 import { Draw } from "./../js/draw.js"
-//import { Enemy } from "./enemy.js";
 
 export class Model extends Draw {
 	constructor(xPos, yPos, distance, scale, width, height, color) {

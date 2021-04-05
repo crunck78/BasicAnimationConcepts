@@ -84,22 +84,4 @@ export class Character extends Item {
 			}
 		}
 	}
-
-	/**
-	 * 
-	 */
-	update(timeStamp) {
-		if (this.startUpdate === undefined){// update start
-			this.startUpdate = timeStamp;// set timer to 0
-			this.intervalCounter = this.animationInterval;
-		}
-		const elapse = Math.trunc(timeStamp - this.startUpdate);
-
-		this.currentImg = this.animations[this.status][this.animationIndex % this.animations[this.status].length];
-
-		if(elapse > this.intervalCounter){
-			this.intervalCounter = this.animationInterval + elapse;
-			this.animationIndex++;
-		}
-	}
 }

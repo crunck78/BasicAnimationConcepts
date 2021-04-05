@@ -9,7 +9,8 @@ window.addEventListener("load", async ()=>{
 	//document.getElementById("touchpad").classList.remove("d-none");
 	Draw.init();
 	const newGame = new Game(allAnimations);
-	newGame.draw();
+	requestAnimationFrame(newGame.draw.bind(newGame));
+	requestAnimationFrame(newGame.checkForCollisions.bind(newGame));
 	requestAnimationFrame(newGame.update.bind(newGame));
 	//newGame.listenForTouches(newGame.level.pepe, newGame);
 	newGame.listenForKeys(newGame.level.pepe, newGame);

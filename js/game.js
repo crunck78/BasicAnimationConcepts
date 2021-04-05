@@ -195,6 +195,26 @@ export class Game extends Draw {
 		// player <-> enemy if collision happens from above  kill enemy, else hurt player
 		// player <-> collectibles on collision all types delete collectible
 		// player <-> platforms if collision happens from above player.groundPos = platform.y
+		let array = this.level.enemies;
+		for (let index = 0; index < array.length; index++) {
+			const enemy = array[index];
+			
+			for (let index2 = 0; index2 < array.length; index2++) {
+				const enemy2 = array[index2];
+				if(index2 == index){
+					continue;
+				}
+				if(Game.isColliding(enemy, enemy2)){
+					if(enemy.direction == enemy2.direction){
+						enemy2.direction = -enemy2.direction;
+					}else{
+						enemy2.direction = -enemy2.direction;
+						enemy.direction = -enemy.direction;
+					}
+					
+				}
+			}
+		}
 		requestAnimationFrame(this.checkForCollisions.bind(this));
 	}
 }
