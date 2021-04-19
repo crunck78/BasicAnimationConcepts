@@ -46,7 +46,7 @@ export class Model extends Draw {
 	 * @param {number} movementSpeed 
 	 */
 	moveLeft(movementSpeed) {
-		this.x += movementSpeed? (movementSpeed * this.distance) : (this.movementSpeed * this.distance);
+		this.x += movementSpeed ? (movementSpeed * this.distance) : (this.movementSpeed * this.distance);
 	}
 
 	/**
@@ -55,7 +55,7 @@ export class Model extends Draw {
 	 * @param {number} movementSpeed 
 	 */
 	moveRight(movementSpeed) {
-		this.x -= movementSpeed? (movementSpeed * this.distance) : (this.movementSpeed * this.distance);
+		this.x -= movementSpeed ? (movementSpeed * this.distance) : (this.movementSpeed * this.distance);
 	}
 
 	/**
