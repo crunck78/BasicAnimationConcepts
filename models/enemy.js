@@ -8,13 +8,17 @@ export class Enemy extends Item{
 	}
 
 	update(timeStamp){
-		if(this.direction == RIGHT_DIRECTION){
-			this.moveRight();
-		}
+		// if(this.direction == RIGHT_DIRECTION){
+		// 	this.moveRight();
+		// }
 
-		if(this.direction == LEFT_DIRECTION){
-			this.moveLeft();
-		}
+		// if(this.direction == LEFT_DIRECTION){
+		// 	this.moveLeft();
+		// }
 		super.update(timeStamp);
+	}
+
+	setStatus(currentStatus){
+		
 	}
 }

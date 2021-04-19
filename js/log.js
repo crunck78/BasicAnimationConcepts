@@ -4,7 +4,7 @@ export class Log{
 
 	static ctx = document.getElementById("log");
 	static print(msg){
-		Log.ctx.innerHTML += `${msg}<br>`;
+		Log.ctx.innerHTML = `${msg}`;
 	}
 	
 	static clear(){

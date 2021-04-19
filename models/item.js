@@ -14,6 +14,7 @@ export class Item extends Model {
 		this.animations = animationObj? animationObj : {};
 		this.currentImg = animationObj? animationObj[status][0] : new Image();
 		this.startMove;
+		this.startHit;
 		this.moveInProgress = false;
 		this.collisionInProgress = false;
 		this.animationIndex = 0;

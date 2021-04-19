@@ -18,30 +18,30 @@ export class Draw {
 	/**
 	 * Abstract methode. Implemented by the Child Class
 	 */
-	 update() {
+	update() {
 		throw new TypeError("Methode has no implementation!");
 	}
-	
-	
+
+
 	/**
 	 * Abstract methode. Implemented by the Child Class
 	 */
 	moveLeft() {
 		throw new TypeError("Methode has no implementation!");
 	}
-	
+
 	/**
 	 * Abstract methode. Implemented by the Child Class
 	 */
 	moveRight() {
 		throw new TypeError("Methode has no implementation!");
 	}
-	
+
 	/**
 	 * Holds the first Canvas of the DOM
 	 * @type HTMLCanvasElement
 	 */
-	static cnv ;
+	static cnv;
 	/**
 	 * Holds the 2d Context of the Canvas.
 	 * @type CanvasRenderingContext2D
@@ -62,7 +62,7 @@ export class Draw {
 			element.draw();
 		});
 	}
-	
+
 	/**
 	 *  Iterates an Array of Models or Scenes and move each Model to the right by a given speed
 	 * 
@@ -75,7 +75,7 @@ export class Draw {
 			element.moveRight(movementSpeed);
 		});
 	}
-	
+
 	/**
 	 * Iterates an Array of Models or Scenes and move each to the left by a given speed
 	 * 
@@ -88,7 +88,7 @@ export class Draw {
 			element.moveLeft(movementSpeed);
 		});
 	}
-	
+
 	/**
 	 * Used to clear The Canvas on repainting, should be called 1st, before any other draw calls.
 	 */
@@ -114,7 +114,7 @@ export class Draw {
 	 * Initialize static members of Draw. cnv, ctx and GROUND_POS 
 	 */
 	static init() {
-		if(!Draw.cnv){
+		if (!Draw.cnv) {
 			Draw.cnv = document.getElementsByTagName("canvas")[0];
 			//Draw.cnv.style.border = `2px solid black`;
 			Draw.cnv.classList.remove("d-none");

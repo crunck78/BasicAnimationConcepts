@@ -19,14 +19,16 @@ export class World extends Draw {
 			this.scenes.push(new Scene(i));
 		}
 		this.enemies = [];
-		for (let i = 0; i < 5; i++) {
-			this.enemies.push(new Enemy((i + 1) * 100, Draw.GROUND_POS - (allAnimations.chickenSmallAnimations["walk"][0].height * 0.2), 1, 1, (allAnimations.chickenSmallAnimations["walk"][0].width * 0.2), (allAnimations.chickenSmallAnimations["walk"][0].height * 0.2), "red", "walk", allAnimations.chickenSmallAnimations));
+		for (let i = 0; i < 1; i++) {
+			this.enemies.push(new Enemy((i + 1) * 300, Draw.GROUND_POS - (allAnimations.chickenSmallAnimations["walk"][0].height * 0.2), 1, 1, (allAnimations.chickenSmallAnimations["walk"][0].width * 0.2), (allAnimations.chickenSmallAnimations["walk"][0].height * 0.2), "red", "walk", allAnimations.chickenSmallAnimations));
 		}
 		this.items = [];
 		for (let i = 0; i < 5; i++) {
 			this.items.push(new Item((i + 1) * 150, Draw.GROUND_POS - (allAnimations.bottleAnimations["buried"][0].height * 0.2), 1, 1, (allAnimations.bottleAnimations["buried"][0].width * 0.2), (allAnimations.bottleAnimations["buried"][0].height * 0.2), "green", "buried", allAnimations.bottleAnimations));
 		}
-		console.log(this.items);
+		for (let i = 0; i < 5; i++) {
+			this.items.push(new Item((i + 1) * 300, Draw.GROUND_POS - (allAnimations.coinAnimations["spin"][0].height * 0.5) - 300, 1, 1, (allAnimations.coinAnimations["spin"][0].width * 0.5), (allAnimations.coinAnimations["spin"][0].height * 0.5), "gold", "spin", allAnimations.coinAnimations));
+		}
 	}
 
 	/**
@@ -35,14 +37,17 @@ export class World extends Draw {
 	draw() {
 		//Draw.clearCanvas();
 		this.sky.draw();
+		Draw.ctx.save();
+		Draw.ctx.translate(0,0);
 		World.drawGroundLine();
 		Draw.drawElements(this.scenes);
 		Draw.drawElements(this.items);
 		Draw.drawElements(this.enemies);
-		this.pepe.draw();
-		World.drawGroundLine();
 		this.worldLeftEdge.draw();
 		this.worldRightEdge.draw();
+		Draw.ctx.restore();
+		this.pepe.draw();
+		World.drawGroundLine();
 		this.worldCenter.draw();
 	}
 

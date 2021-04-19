@@ -8,6 +8,7 @@ export class Character extends Item {
 		this.startJump;
 		this.startThrow;
 		this.jumpInProgess = false;
+		this.isHit = false;
 		this.jumpVelocity = -98.1 * 6;
 		this.throwInProgress = false;
 		this.throwVelocity = -98.1 * 6;
@@ -62,7 +63,14 @@ export class Character extends Item {
 	 * @param {string} currentStatus - actual status value of Character
 	 */
 	setStatus(currentStatus) {
-		if (this.jumpInProgess) {
+		
+		if (this.isHit) {
+			if (currentStatus != "hit") {
+				this.animationIndex = 0;
+				this.status = "hit";
+				this.animationInterval = 300;
+			}
+		} else if (this.jumpInProgess) {
 			if (currentStatus != "jump") {
 				this.animationIndex = 0;
 				this.status = "jump";
@@ -83,5 +91,9 @@ export class Character extends Item {
 				this.animationInterval = 300;
 			}
 		}
+	}
+
+	update(timeStamp) {
+		super.update(timeStamp);
 	}
 }

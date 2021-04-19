@@ -1,13 +1,19 @@
 import { Draw } from "./draw.js"
 import { World } from "./../models/world.js"
-import { LEFT_DIRECTION, RIGHT_DIRECTION, LEFT_SIDE, RIGHT_SIDE, ABOVE_SIDE, BELOW_SIDE, DEBUG_ON } from "./constants.js"
+import { LEFT_DIRECTION, RIGHT_DIRECTION, LEFT_SIDE, RIGHT_SIDE, ABOVE_SIDE, BELOW_SIDE, DEBUG_ON, LOG } from "./constants.js"
 import { Log } from "./log.js"
 import { Character } from "../models/character.js";
+import { Camera } from "./camera.js"
 
 export class Game extends Draw {
 
 	static debugMode = DEBUG_ON;
 	//static gameInstances = 0;
+
+	/**
+	 * 
+	 */
+	static requestCollisionCheck;
 	/**
 	 * Holds the requestAnimationFrame index to Game.moveLeft, used to cancel the requestAnimationFrame.
 	 * ( See Game.listenForKeys and Game.listenForTouches )
@@ -24,8 +30,11 @@ export class Game extends Draw {
 		//Game.gameInstances++;
 		super();
 		this.level = new World(allAnimations);
+		Camera.x = 0;
+		Camera.y = 0;
 		//this.touchPadCont;
 		//this.startDraw;
+		this.startCollisionCkeck;
 	}
 
 	/**
@@ -57,7 +66,7 @@ export class Game extends Draw {
 		} else if (this.level.worldRightEdge.x <= Draw.cnv.width) {
 			if (!Game.isColliding(this.level.pepe, this.level.worldCenter)) {
 				this.level.pepe.moveRight(this.level.pepe.movementSpeed);
-			}else{
+			} else {
 				this.level.moveLeft(timeStamp);
 			}
 		} else {
@@ -65,6 +74,13 @@ export class Game extends Draw {
 		}
 		Game.requestMoveLeft = requestAnimationFrame(this.moveLeft.bind(this));
 	}
+
+
+	/**
+	 * 
+	 * @param {*} timeStamp 
+	 */
+
 	/**
 	 * Keeps issuing the moveRight methode of World's instance and 
 	 * updates the Game.requestMoveRight static member, as long as request animation frame is not canceled.
@@ -95,6 +111,10 @@ export class Game extends Draw {
 	static isColliding(obj1, obj2) {
 		//TODO check also for below intersection
 		return ((obj2.x - obj1.x + obj2.collisionOffset.x[RIGHT_SIDE]) < (obj1.width - obj1.collisionOffset.x[LEFT_SIDE]) && (obj1.x - obj2.x + obj1.collisionOffset.x[LEFT_SIDE]) < (obj2.width - obj2.collisionOffset.x[RIGHT_SIDE])) && ((obj2.y - obj1.y + obj2.collisionOffset.y[ABOVE_SIDE]) < (obj1.height - obj1.collisionOffset.y[BELOW_SIDE]));
+	}
+
+	static isIntersecting(obj1, obj2) {
+
 	}
 
 	/**
@@ -189,32 +209,40 @@ export class Game extends Draw {
 		});
 	}
 
-	checkForCollisions(timeStamp){
-		//We check for collisions pre animation frame
-		//collisions types player <-> enemy, collectibles( coins, bottles ), materials( world edges, groundline, platforms )
-		// player <-> enemy if collision happens from above  kill enemy, else hurt player
-		// player <-> collectibles on collision all types delete collectible
-		// player <-> platforms if collision happens from above player.groundPos = platform.y
+	checkForCollisions(timeStamp) {
+		this.checkPepeToEnemiesCollision();
+		requestAnimationFrame(this.checkForCollisions.bind(this));
+	}
+
+	checkPepeToEnemiesCollision(timeStamp) {
+		this.level.enemies.forEach((enemy, index) => {
+			//TODO
+		});
+	}
+
+	checkEnemiesToEnemiesCollisions() {
 		let array = this.level.enemies;
 		for (let index = 0; index < array.length; index++) {
 			const enemy = array[index];
-			
+
 			for (let index2 = 0; index2 < array.length; index2++) {
 				const enemy2 = array[index2];
-				if(index2 == index){
+				if (index2 == index) {
 					continue;
 				}
-				if(Game.isColliding(enemy, enemy2)){
-					if(enemy.direction == enemy2.direction){
-						enemy2.direction = -enemy2.direction;
-					}else{
+				if (Game.isColliding(enemy, enemy2)) {
+					if (enemy.direction == enemy2.direction) {
+						if (enemy.x > enemy2.x)
+							enemy.direction = -enemy.direction;
+						if (enemy.x < enemy2.x)
+							enemy2.direction = -enemy2.direction;
+					} else {
 						enemy2.direction = -enemy2.direction;
 						enemy.direction = -enemy.direction;
 					}
-					
+
 				}
 			}
 		}
-		requestAnimationFrame(this.checkForCollisions.bind(this));
 	}
 }
