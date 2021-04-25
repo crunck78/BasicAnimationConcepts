@@ -5,6 +5,54 @@ body {
   align-items: center;
 }
 
+#hud {
+  position: absolute;
+  top: 0;
+  width: 688px;
+  /*canvas width - hud padding*/
+  height: 449px;
+  /*canvas height - hud padding*/
+  /*background-color: grey;*/
+  z-index: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 16px;
+}
+
+#life-bar {
+  width: 200px;
+  object-fit: contain;
+}
+
+#item-list img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+}
+
+.hud-element {
+  height: fit-content;
+}
+
+#item-list {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-right: 40px;
+}
+
+.counter {
+  font-size: 20px;
+  color: white;
+}
+
 .touchpad-container {
   background-color: white;
   display: flex;

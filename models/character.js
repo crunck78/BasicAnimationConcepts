@@ -15,8 +15,8 @@ export class Character extends Item {
 		this.throwAngle = 0.52359878; //Radians -> 45 Degrees
 		this.bottle = new Item(xPos, yPos, distance, scale, 50, 50, "yellow", "throwed", bottleAnimations);
 		this.bottle.initY = this.y;
-		this.bottles = [];
-		this.coins = [];
+		this.bottles = 0;
+		this.coins = 0;
 		this.canJump = true;
 	}
 

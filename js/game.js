@@ -2,8 +2,11 @@ import { Draw } from "./draw.js"
 import { World } from "./../models/world.js"
 import { LEFT_DIRECTION, RIGHT_DIRECTION, LEFT_SIDE, RIGHT_SIDE, ABOVE_SIDE, BELOW_SIDE, DEBUG_ON, LOG } from "./constants.js"
 import { Log } from "./log.js"
-import { Character } from "../models/character.js";
+import { Character } from "../models/character.js"
 import { Camera } from "./camera.js"
+import { Bottle } from "../models/bottle.js"
+import { Coin } from "../models/coin.js"
+import { Hud } from "./hud.js"
 
 export class Game extends Draw {
 
@@ -30,6 +33,7 @@ export class Game extends Draw {
 		//Game.gameInstances++;
 		super();
 		this.level = new World(allAnimations);
+		this.hud = new Hud(this.level.pepe);
 		Camera.x = 0;
 		Camera.y = 0;
 		//this.touchPadCont;
@@ -50,6 +54,7 @@ export class Game extends Draw {
 	*/
 	update(timeStamp) {
 		this.level.update(timeStamp);
+		this.hud.update();
 		requestAnimationFrame(this.update.bind(this));
 	}
 
@@ -219,6 +224,10 @@ export class Game extends Draw {
 		this.level.items.forEach((item, index) =>{
 			if( Game.isColliding(this.level.pepe, item)){
 				this.level.items.splice(index, 1);
+				if( item instanceof Coin)
+					this.level.pepe.coins++;
+				if( item instanceof Bottle)
+					this.level.pepe.bottles++;
 			}
 		});
 	}

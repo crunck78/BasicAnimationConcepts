@@ -1,29 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
 	<meta name='viewport' content='width=device-width, initial-scale=1'>
-    <link href="css/styles.css" rel="stylesheet">
-	  <script type="module" src="js/scripts.js"></script>
-  </head>
-  <body>
-	  <div id="load">Loading...</div>
+	<link href="css/styles.css" rel="stylesheet">
+	<script type="module" src="js/scripts.js"></script>
+</head>
+
+<body>
+	<div id="load">Loading...</div>
+	<div id="hud" class="d-none">
+		<!--Container for HUD-->
+	</div>
 	<canvas id="cnv" class="d-none"></canvas>
 	<div id="touchpad" class="touchpad-container d-none">
-	  <div class="pad-container">
-		L-
-		<button type="button" id="left-pad" class="pad"></button>
-		<button type="button" id="right-pad" class="pad"></button>
-		-R
-	  </div>
+		<div class="pad-container">
+			L-
+			<button type="button" id="left-pad" class="pad"></button>
+			<button type="button" id="right-pad" class="pad"></button>
+			-R
+		</div>
 
-	  <div class="pad-container">
-		T-
-		<button type="button" id="trow-pad" class="pad"></button>
-		<button type="button" id="jump-pad" class="pad"></button>
-		-J
-	  </div>
+		<div class="pad-container">
+			T-
+			<button type="button" id="trow-pad" class="pad"></button>
+			<button type="button" id="jump-pad" class="pad"></button>
+			-J
+		</div>
 	</div>
 	<div id="log"></div>
 
-  </body>
-</html>		
+</body>
+
+</html>

@@ -5,6 +5,8 @@ import { Enemy } from "./enemy.js"
 import { Item } from "./item.js"
 import { Background } from "./background.js"
 import { Model } from "./model.js"
+import { Bottle } from "./bottle.js"
+import { Coin } from "./coin.js"
 
 export class World extends Draw {
 	constructor(allAnimations) {
@@ -24,10 +26,10 @@ export class World extends Draw {
 		}
 		this.items = [];
 		for (let i = 0; i < 5; i++) {
-			this.items.push(new Item((i + 1) * 150, Draw.GROUND_POS - (allAnimations.bottleAnimations["buried"][0].height * 0.2), 1, 1, (allAnimations.bottleAnimations["buried"][0].width * 0.2), (allAnimations.bottleAnimations["buried"][0].height * 0.2), "green", "buried", allAnimations.bottleAnimations));
+			this.items.push(new Bottle((i + 1) * 150, Draw.GROUND_POS - (allAnimations.bottleAnimations["buried"][0].height * 0.2), 1, 1, (allAnimations.bottleAnimations["buried"][0].width * 0.2), (allAnimations.bottleAnimations["buried"][0].height * 0.2), "green", "buried", allAnimations.bottleAnimations));
 		}
 		for (let i = 0; i < 5; i++) {
-			this.items.push(new Item((i + 1) * 300, Draw.GROUND_POS - (allAnimations.coinAnimations["spin"][0].height * 0.5) - 300, 1, 1, (allAnimations.coinAnimations["spin"][0].width * 0.5), (allAnimations.coinAnimations["spin"][0].height * 0.5), "gold", "spin", allAnimations.coinAnimations));
+			this.items.push(new Coin((i + 1) * 300, Draw.GROUND_POS - (allAnimations.coinAnimations["spin"][0].height * 0.5) - 300, 1, 1, (allAnimations.coinAnimations["spin"][0].width * 0.5), (allAnimations.coinAnimations["spin"][0].height * 0.5), "gold", "spin", allAnimations.coinAnimations));
 		}
 	}
 

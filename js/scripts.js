@@ -2,6 +2,7 @@ import { Draw } from "./draw.js"
 import { Game } from "./game.js"
 import { Log } from "./log.js"
 import { createAllAnimations } from "./animations.js"
+import { Hud } from "./hud.js";
 
 window.addEventListener("load", async ()=>{
 	let allAnimations = await createAllAnimations();
