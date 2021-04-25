@@ -19,6 +19,7 @@ export class Model extends Draw {
 		this.intervalCounter;
 		this.movementSpeed = 2;
 		this.collisionOffset = { x: [0, 0], y: [0, 0] }; //offsets the collision detection
+		this.collisionImmun = false;
 	}
 
 	/**

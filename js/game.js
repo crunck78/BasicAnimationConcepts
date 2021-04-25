@@ -110,7 +110,7 @@ export class Game extends Draw {
 	 */
 	static isColliding(obj1, obj2) {
 		//TODO check also for below intersection
-		return ((obj2.x - obj1.x + obj2.collisionOffset.x[RIGHT_SIDE]) < (obj1.width - obj1.collisionOffset.x[LEFT_SIDE]) && (obj1.x - obj2.x + obj1.collisionOffset.x[LEFT_SIDE]) < (obj2.width - obj2.collisionOffset.x[RIGHT_SIDE])) && ((obj2.y - obj1.y + obj2.collisionOffset.y[ABOVE_SIDE]) < (obj1.height - obj1.collisionOffset.y[BELOW_SIDE]));
+		return ((obj2.x - obj1.x + obj2.collisionOffset.x[RIGHT_SIDE]) < (obj1.width - obj1.collisionOffset.x[LEFT_SIDE]) && (obj1.x - obj2.x + obj1.collisionOffset.x[LEFT_SIDE]) < (obj2.width - obj2.collisionOffset.x[RIGHT_SIDE])) && ((obj2.y - obj1.y + obj2.collisionOffset.y[ABOVE_SIDE]) < (obj1.height - obj1.collisionOffset.y[BELOW_SIDE])) && ((obj1.y - obj2.y + obj1.collisionOffset.y[BELOW_SIDE]) < (obj2.height - obj1.collisionOffset.y[ABOVE_SIDE]));
 	}
 
 	static isIntersecting(obj1, obj2) {
@@ -172,7 +172,7 @@ export class Game extends Draw {
 	listenForKeys(pepe, game) {
 		document.addEventListener("keydown", function (e) {
 			const k = e.key;
-			if (e.code == "Space" && !pepe.jumpInProgess) {
+			if (e.code == "Space" && !pepe.jumpInProgess && pepe.canJump) {
 				window.requestAnimationFrame(pepe.jump.bind(pepe));
 			}
 			if (k == "ArrowRight" && !pepe.isMovingRight) {
@@ -210,13 +210,42 @@ export class Game extends Draw {
 	}
 
 	checkForCollisions(timeStamp) {
-		this.checkPepeToEnemiesCollision();
+		this.checkPepeToEnemiesCollision(timeStamp);
+		this.checkPepeToItemsCollision(timeStamp);
 		requestAnimationFrame(this.checkForCollisions.bind(this));
+	}
+
+	checkPepeToItemsCollision(timeStamp){
+		this.level.items.forEach((item, index) =>{
+			if( Game.isColliding(this.level.pepe, item)){
+				this.level.items.splice(index, 1);
+			}
+		});
 	}
 
 	checkPepeToEnemiesCollision(timeStamp) {
 		this.level.enemies.forEach((enemy, index) => {
-			//TODO
+			if( enemy.status != "dead"){
+
+				if ( Game.isColliding(this.level.pepe, enemy) ){
+					if(enemy.canHit){
+						this.level.pepe.isHit = true;
+					}else{
+						enemy.status = "dead";
+					}
+				}else{
+					this.level.pepe.isHit = false;
+				}
+
+				if ( !(this.level.pepe.isLeftFrom(enemy) || this.level.pepe.isRightFrom(enemy)) ){
+					
+					if(this.level.pepe.isAbove(enemy)){
+						enemy.canHit = false;
+					}else{
+						enemy.canHit = true;
+					}
+				}
+			}
 		});
 	}
 

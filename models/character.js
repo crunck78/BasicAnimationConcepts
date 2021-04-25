@@ -17,6 +17,7 @@ export class Character extends Item {
 		this.bottle.initY = this.y;
 		this.bottles = [];
 		this.coins = [];
+		this.canJump = true;
 	}
 
 	/**
