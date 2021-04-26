@@ -220,42 +220,45 @@ export class Game extends Draw {
 		requestAnimationFrame(this.checkForCollisions.bind(this));
 	}
 
-	checkPepeToItemsCollision(timeStamp){
-		this.level.items.forEach((item, index) =>{
-			if( Game.isColliding(this.level.pepe, item)){
+	checkPepeToItemsCollision(timeStamp) {
+		this.level.items.forEach((item, index) => {
+			if (Game.isColliding(this.level.pepe, item)) {
 				this.level.items.splice(index, 1);
-				if( item instanceof Coin)
+				if (item instanceof Coin)
 					this.level.pepe.coins++;
-				if( item instanceof Bottle)
+				if (item instanceof Bottle)
 					this.level.pepe.bottles++;
 			}
 		});
 	}
 
 	checkPepeToEnemiesCollision(timeStamp) {
-		this.level.enemies.forEach((enemy, index) => {
-			if( enemy.status != "dead"){
-
-				if ( Game.isColliding(this.level.pepe, enemy) ){
-					if(enemy.canHit){
+		for (let i = 0; i < this.level.enemies.length; i++) {
+			const enemy = this.level.enemies[i];
+			if (enemy.status != "dead") {
+				if (Game.isColliding(this.level.pepe, enemy)) {
+					if (enemy.canHit) {
 						this.level.pepe.isHit = true;
-					}else{
+						break;
+					} else {
 						enemy.status = "dead";
-					}
-				}else{
+						this.level.pepe.isHit = false;
+					}	
+				} else {
 					this.level.pepe.isHit = false;
 				}
+				
+				if (!(this.level.pepe.isLeftFrom(enemy) || this.level.pepe.isRightFrom(enemy))) {
 
-				if ( !(this.level.pepe.isLeftFrom(enemy) || this.level.pepe.isRightFrom(enemy)) ){
-					
-					if(this.level.pepe.isAbove(enemy)){
+					if (this.level.pepe.isAbove(enemy)) {
 						enemy.canHit = false;
-					}else{
+					} else {
 						enemy.canHit = true;
 					}
-				}
+				} else
+					enemy.canHit = true;
 			}
-		});
+		};
 	}
 
 	checkEnemiesToEnemiesCollisions() {

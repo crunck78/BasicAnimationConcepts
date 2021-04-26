@@ -18,6 +18,8 @@ export class Character extends Item {
 		this.bottles = 0;
 		this.coins = 0;
 		this.canJump = true;
+		this.isImmun = false;
+		this.startHit;
 	}
 
 	/**

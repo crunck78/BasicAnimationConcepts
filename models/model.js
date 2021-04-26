@@ -1,4 +1,4 @@
-import { RIGHT_DIRECTION, WIREFRAME_ON, WIREFRAME_OFF } from "../js/constants.js";
+import { RIGHT_DIRECTION, WIREFRAME_ON, WIREFRAME_OFF, NULL } from "../js/constants.js";
 import { Game } from "../js/game.js";
 import { Draw } from "./../js/draw.js"
 
@@ -26,24 +26,26 @@ export class Model extends Draw {
 	 * Draws a Model on a initialized canvas. Canvas is to be initialized using the static methode init of the Draw class
 	 */
 	draw() {
-		if (this.currentImg && this.currentImg.complete) {
-			Draw.ctx.save();
-
-			//Draw.ctx.translate(this.x, this.y);
-			Draw.ctx.scale(this.direction, 1);
-			if (Game.debugMode) {
-				if (this.wireframeMode)
-					this.drawWireframe();
+		if(this.isInsideCanvas()){
+			if (this.currentImg && this.currentImg.complete) {
+				Draw.ctx.save();
+	
+				//Draw.ctx.translate(this.x, this.y);
+				Draw.ctx.scale(this.direction, 1);
+				if (Game.debugMode) {
+					if (this.wireframeMode)
+						this.drawWireframe();
+				}
+				
+				Draw.ctx.drawImage(this.currentImg, this.x * this.direction, this.y, this.width * this.direction, this.height);
+				Draw.ctx.restore();
+	
+				if (Game.debugMode)
+					this.showInfo();
 			}
-
-			Draw.ctx.drawImage(this.currentImg, this.x * this.direction, this.y, this.width * this.direction, this.height);
-			Draw.ctx.restore();
-
-			if (Game.debugMode)
-				this.showInfo();
+			else
+				Draw.drawModelRect(this);
 		}
-		else
-			Draw.drawModelRect(this);
 	}
 
 	showInfo() {
@@ -130,4 +132,12 @@ export class Model extends Draw {
 	update() {
 		throw new TypeError("Methode has no implementation!");
 	}
+
+	/**
+	 * Checks if the Model is inside Canvas
+	 */
+	isInsideCanvas(){
+		return !(this.x > Draw.cnv.width || (this.x + this.width) < NULL);
+	}
+
 }

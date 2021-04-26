@@ -7,6 +7,7 @@ import { Background } from "./background.js"
 import { Model } from "./model.js"
 import { Bottle } from "./bottle.js"
 import { Coin } from "./coin.js"
+import { ENEMY_LENGTH, ITEM_LENGTH, SCENE_LENGTH } from "../js/constants.js"
 
 export class World extends Draw {
 	constructor(allAnimations) {
@@ -14,21 +15,21 @@ export class World extends Draw {
 		this.worldLeftEdge = new Model(10, 0, 1, 1, 1, Draw.cnv.height, "white");
 		this.worldRightEdge = new Model(Draw.cnv.width * 2, 0, 1, 1, 1, Draw.cnv.height, "white");
 		this.worldCenter = new Model(Draw.cnv.width / 2, 0, 1, 1, 1, Draw.cnv.height, "white");
-		this.sky = new Background(0, 0, 1, 1, Draw.cnv.width, Draw.cnv.height, "white", "img/sky.png")
+		this.sky = new Background(0, 0, 1, 1, Draw.cnv.width, Draw.cnv.height, "white", "img/sky.png");
 		this.pepe = new Character(10, Draw.GROUND_POS - (allAnimations.pepeAnimations["idle"][0].height * 0.2), 1, 1, allAnimations.pepeAnimations["idle"][0].width * 0.2, allAnimations.pepeAnimations["idle"][0].height * 0.2, "blue", "walk", allAnimations.pepeAnimations, allAnimations.bottleAnimations);
 		this.scenes = [];
-		for (let i = 0; i < 2; i++) {
+		for (let i = 0; i < SCENE_LENGTH; i++) {
 			this.scenes.push(new Scene(i));
 		}
 		this.enemies = [];
-		for (let i = 0; i < 1; i++) {
+		for (let i = 0; i < ENEMY_LENGTH; i++) {
 			this.enemies.push(new Enemy((i + 1) * 300, Draw.GROUND_POS - (allAnimations.chickenSmallAnimations["walk"][0].height * 0.2), 1, 1, (allAnimations.chickenSmallAnimations["walk"][0].width * 0.2), (allAnimations.chickenSmallAnimations["walk"][0].height * 0.2), "red", "walk", allAnimations.chickenSmallAnimations));
 		}
 		this.items = [];
-		for (let i = 0; i < 5; i++) {
+		for (let i = 0; i < ITEM_LENGTH; i++) {
 			this.items.push(new Bottle((i + 1) * 150, Draw.GROUND_POS - (allAnimations.bottleAnimations["buried"][0].height * 0.2), 1, 1, (allAnimations.bottleAnimations["buried"][0].width * 0.2), (allAnimations.bottleAnimations["buried"][0].height * 0.2), "green", "buried", allAnimations.bottleAnimations));
 		}
-		for (let i = 0; i < 5; i++) {
+		for (let i = 0; i < ITEM_LENGTH; i++) {
 			this.items.push(new Coin((i + 1) * 300, Draw.GROUND_POS - (allAnimations.coinAnimations["spin"][0].height * 0.5) - 300, 1, 1, (allAnimations.coinAnimations["spin"][0].width * 0.5), (allAnimations.coinAnimations["spin"][0].height * 0.5), "gold", "spin", allAnimations.coinAnimations));
 		}
 	}
