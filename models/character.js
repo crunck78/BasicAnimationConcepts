@@ -1,6 +1,8 @@
 import { Item } from "./item.js"
 import { GRAVITY } from "./../js/constants.js"
 import { Log } from "./../js/log.js"
+import { Game } from "./../js/game.js"
+import { Model } from "./model.js";
 
 export class Character extends Item {
 	constructor(xPos, yPos, distance, scale, width, height, color, status, animationObj, bottleAnimations) {
@@ -20,6 +22,7 @@ export class Character extends Item {
 		this.canJump = true;
 		this.isImmun = false;
 		this.startHit;
+		this.healt = 100;
 	}
 
 	/**
@@ -97,6 +100,42 @@ export class Character extends Item {
 	}
 
 	update(timeStamp) {
+		// this.isMovingRight = Game.requestRightMove && !this.isMovingRight;
+		// this.isMovingLeft = Game.requestLeftMove && !this.isMovingLeft;
+		// this.moveInProgress = this.isMovingRight || this.isMovingLeft;
+		//TODO SET DIRECTION
 		super.update(timeStamp);
+	}
+
+	/**
+	 * 
+	 * @param {Model[]} models
+	 */
+	checkForCollisions( models ){
+		for(let i = 0; i < models.length; i++){
+			const model = models[i];
+			if( model instanceof Enemy){
+				this.checkEnemyCollision(model);
+			}
+			if( model instanceof item){
+				this.checkItemCollision(model);
+			}
+		}
+	}
+
+	/**
+	 * Check for Enemy Collision
+	 * @param {Enemy} enemy -
+	 */
+	checkEnemyCollision(enemy){
+		
+	}
+
+	/**
+	 * Check for Item Collision
+	 * @param {Item} item -
+	 */
+	checkItemCollision(item){
+
 	}
 }

@@ -7,7 +7,7 @@ import { Background } from "./background.js"
 import { Model } from "./model.js"
 import { Bottle } from "./bottle.js"
 import { Coin } from "./coin.js"
-import { ENEMY_LENGTH, ITEM_LENGTH, SCENE_LENGTH } from "../js/constants.js"
+import { ENEMY_LENGTH, IMMUNITY_TIME, ITEM_LENGTH, SCENE_LENGTH, LEFT_DIRECTION, RIGHT_DIRECTION, LEFT_SIDE, RIGHT_SIDE, ABOVE_SIDE, BELOW_SIDE, DEBUG_ON, LOG } from "../js/constants.js"
 
 export class World extends Draw {
 	constructor(allAnimations) {
@@ -41,7 +41,7 @@ export class World extends Draw {
 		//Draw.clearCanvas();
 		this.sky.draw();
 		Draw.ctx.save();
-		Draw.ctx.translate(0,0);
+		Draw.ctx.translate(0, 0);
 		World.drawGroundLine();
 		Draw.drawElements(this.scenes);
 		Draw.drawElements(this.items);
@@ -56,14 +56,25 @@ export class World extends Draw {
 
 	/**
 	 * Update World
+	 * @param {number} timeStamp -
 	 */
 	update(timeStamp) {
 		this.pepe.setStatus(this.pepe.status);
 		this.pepe.update(timeStamp);
 		//Draw.moveElementsRight(this.enemies);
-		this.enemies.forEach(enemy =>{
+		this.enemies.forEach(enemy => {
 			enemy.update(timeStamp);
 		});
+	}
+
+	/**
+	 * Check for Collisions
+	 * @param {number} timeStamp 
+	 */
+	checkForCollisions(timeStamp) {
+		//TODO For Now Only Character to World Collision Checks
+		this.pepe.checkForCollisions(this.enemies);
+		this.pepe.checkForCollisions(this.items);
 	}
 
 	/**
@@ -94,8 +105,53 @@ export class World extends Draw {
 	 * @param {Model} obj2 -
 	 * @returns {boolean} true || false
 	 */
-	isColliding(obj1, obj2) {
-		return ((obj2.x - obj1.x + 10) < (obj1.width - 40) && (obj1.x - obj2.x + 40) < (obj2.width - 10)) && ((obj2.y - obj1.y + 10) < obj1.height);
+	static isColliding(obj1, obj2) {
+		return ((obj2.x - obj1.x + obj2.collisionOffset.x[RIGHT_SIDE]) < (obj1.width - obj1.collisionOffset.x[LEFT_SIDE]) && (obj1.x - obj2.x + obj1.collisionOffset.x[LEFT_SIDE]) < (obj2.width - obj2.collisionOffset.x[RIGHT_SIDE])) && ((obj2.y - obj1.y + obj2.collisionOffset.y[ABOVE_SIDE]) < (obj1.height - obj1.collisionOffset.y[BELOW_SIDE])) && ((obj1.y - obj2.y + obj1.collisionOffset.y[BELOW_SIDE]) < (obj2.height - obj1.collisionOffset.y[ABOVE_SIDE]));
+	}
+
+	checkPepeToItemsCollision(timeStamp) {
+		this.items.forEach((item, index) => {
+			if (World.isColliding(this.pepe, item)) {
+				this.items.splice(index, 1);
+				if (item instanceof Coin)
+					this.pepe.coins++;
+				if (item instanceof Bottle)
+					this.pepe.bottles++;
+			}
+		});
+	}
+
+	checkPepeToEnemiesCollision(timeStamp) {
+		for (let i = 0; i < this.enemies.length; i++) {
+			const enemy = this.enemies[i];
+			if (enemy.status != "dead") {
+				if (World.isColliding(this.pepe, enemy)) {
+					if (enemy.canHit) {
+						this.pepe.isHit = true;
+						if (this.pepe.startHit === undefined) {
+							console.log("FIRST HIT");
+							this.pepe.startHit = timeStamp;
+							this.pepe.intervalHit = IMMUNITY_TIME;
+							this.pepe.healt -= enemy.damage;
+						}
+						const elapse = Math.trunc(timeStamp - this.pepe.startHit);
+						if (elapse > this.pepe.intervalHit) {
+							this.pepe.intervalHit = 1000 + elapse;
+							this.pepe.healt -= enemy.damage;
+						}
+						break;
+					} else {
+						enemy.status = "dead";
+						this.pepe.isHit = false;
+						this.pepe.startHit = timeStamp;
+					}
+				} else {
+					this.pepe.isHit = false;
+					//this.pepe.startHit = timeStamp;
+				}
+				enemy.canHit = this.pepe.isIntersectingX(enemy) && !this.pepe.isAbove(enemy);
+			}
+		};
 	}
 
 	/**

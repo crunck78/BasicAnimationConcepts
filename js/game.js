@@ -17,18 +17,23 @@ export class Game extends Draw {
 	 * 
 	 */
 	static requestCollisionCheck;
+	static requestThrow;
+	static requestAction;
+	static stopAction;
 	/**
 	 * Holds the requestAnimationFrame index to Game.moveLeft, used to cancel the requestAnimationFrame.
 	 * ( See Game.listenForKeys and Game.listenForTouches )
 	 * @type number
 	 */
 	static requestMoveLeft;
+	static requestLeftMove;
 	/**
 	 * Holds the requestAnimationFrame index to Game.moveRight, used to cancel the requestAnimationFrame.
 	 * ( See Game.listenForKeys and Game.listenForTouches )
 	 * @type number
 	 */
 	static requestMoveRight;
+	static requestRightMove;
 	constructor(allAnimations) {
 		//Game.gameInstances++;
 		super();
@@ -50,12 +55,22 @@ export class Game extends Draw {
 	}
 
 	/**
-	* UpdateLoop
-	*/
+	 * 
+	 * @param {*} timeStamp -
+	 */
 	update(timeStamp) {
 		this.level.update(timeStamp);
-		this.hud.update();
+		this.hud.update(timeStamp);
 		requestAnimationFrame(this.update.bind(this));
+	}
+
+	/**
+	 * Check collisions Loop
+	 * @param {*} timeStamp - 
+	 */
+	 checkForCollisions(timeStamp) {
+		this.level.checkForCollisions(timeStamp);
+		requestAnimationFrame(this.checkForCollisions.bind(this));
 	}
 
 	/**
@@ -65,11 +80,11 @@ export class Game extends Draw {
 	 */
 	moveLeft(timeStamp) {
 		if (this.level.worldLeftEdge.x >= 0) {
-			if (!Game.isColliding(this.level.pepe, this.level.worldLeftEdge)) {
+			if (!World.isColliding(this.level.pepe, this.level.worldLeftEdge)) {
 				this.level.pepe.moveRight(this.level.pepe.movementSpeed);
 			}
 		} else if (this.level.worldRightEdge.x <= Draw.cnv.width) {
-			if (!Game.isColliding(this.level.pepe, this.level.worldCenter)) {
+			if (!World.isColliding(this.level.pepe, this.level.worldCenter)) {
 				this.level.pepe.moveRight(this.level.pepe.movementSpeed);
 			} else {
 				this.level.moveLeft(timeStamp);
@@ -92,34 +107,19 @@ export class Game extends Draw {
 	 * ( See Game.listenForKeys and Game.listenForTouches for usage and cancelation )
 	 */
 	moveRight(timeStamp) {
-		if (!Game.isColliding(this.level.pepe, this.level.worldRightEdge)) {
-			if (!Game.isColliding(this.level.pepe, this.level.worldCenter)) {
+		if (!World.isColliding(this.level.pepe, this.level.worldRightEdge)) {
+			if (!World.isColliding(this.level.pepe, this.level.worldCenter)) {
 				this.level.pepe.moveLeft(this.level.pepe.movementSpeed);
 			} else {
 				if (this.level.worldRightEdge.x >= Draw.cnv.width)
 					this.level.moveRight(timeStamp);
 				else {
-					if (!Game.isColliding(this.level.pepe, this.level.worldRightEdge))
+					if (!World.isColliding(this.level.pepe, this.level.worldRightEdge))
 						this.level.pepe.moveLeft(this.level.pepe.movementSpeed);
 				}
 			}
 		}
 		Game.requestMoveRight = requestAnimationFrame(this.moveRight.bind(this));
-	}
-
-	/**
-	 * Returns true or false if the arguments Models in game collide.
-	 * @param {Model} obj1 - 
-	 * @param {Model} obj2 -
-	 * @returns {boolean} true || false
-	 */
-	static isColliding(obj1, obj2) {
-		//TODO check also for below intersection
-		return ((obj2.x - obj1.x + obj2.collisionOffset.x[RIGHT_SIDE]) < (obj1.width - obj1.collisionOffset.x[LEFT_SIDE]) && (obj1.x - obj2.x + obj1.collisionOffset.x[LEFT_SIDE]) < (obj2.width - obj2.collisionOffset.x[RIGHT_SIDE])) && ((obj2.y - obj1.y + obj2.collisionOffset.y[ABOVE_SIDE]) < (obj1.height - obj1.collisionOffset.y[BELOW_SIDE])) && ((obj1.y - obj2.y + obj1.collisionOffset.y[BELOW_SIDE]) < (obj2.height - obj1.collisionOffset.y[ABOVE_SIDE]));
-	}
-
-	static isIntersecting(obj1, obj2) {
-
 	}
 
 	/**
@@ -198,6 +198,10 @@ export class Game extends Draw {
 				pepe.bottle.direction = pepe.direction;
 				window.requestAnimationFrame(pepe.throwBottle.bind(pepe));
 			}
+			if (k == "p") {
+				//TODO - PAUSE GAME
+			}
+
 		});
 		document.addEventListener("keyup", function (e) {
 			const k = e.key;
@@ -214,76 +218,29 @@ export class Game extends Draw {
 		});
 	}
 
-	checkForCollisions(timeStamp) {
-		this.checkPepeToEnemiesCollision(timeStamp);
-		this.checkPepeToItemsCollision(timeStamp);
-		requestAnimationFrame(this.checkForCollisions.bind(this));
+	/**
+	 * Adds all KeyDown and KeyUp Listener events for the user interaction with the Keyboard.
+	 */
+	listenForKeys2() {
+		document.addEventListener("keydown", this.handleKeyDown);
+		document.addEventListener("keyup", this.handleKeyUp);
 	}
 
-	checkPepeToItemsCollision(timeStamp) {
-		this.level.items.forEach((item, index) => {
-			if (Game.isColliding(this.level.pepe, item)) {
-				this.level.items.splice(index, 1);
-				if (item instanceof Coin)
-					this.level.pepe.coins++;
-				if (item instanceof Bottle)
-					this.level.pepe.bottles++;
-			}
-		});
+	handleKeyDown(event) {
+		const k = event.key;
+		Game.requestAction = event.code;
+		Game.requestJump = event.code == "Space";
+		Game.requestRightMove = k == "ArrowRight";
+		Game.requestLeftMove = k == "ArrowLeft";
+		Game.requestThrow = k == "d";
 	}
 
-	checkPepeToEnemiesCollision(timeStamp) {
-		for (let i = 0; i < this.level.enemies.length; i++) {
-			const enemy = this.level.enemies[i];
-			if (enemy.status != "dead") {
-				if (Game.isColliding(this.level.pepe, enemy)) {
-					if (enemy.canHit) {
-						this.level.pepe.isHit = true;
-						break;
-					} else {
-						enemy.status = "dead";
-						this.level.pepe.isHit = false;
-					}	
-				} else {
-					this.level.pepe.isHit = false;
-				}
-				
-				if (!(this.level.pepe.isLeftFrom(enemy) || this.level.pepe.isRightFrom(enemy))) {
-
-					if (this.level.pepe.isAbove(enemy)) {
-						enemy.canHit = false;
-					} else {
-						enemy.canHit = true;
-					}
-				} else
-					enemy.canHit = true;
-			}
-		};
-	}
-
-	checkEnemiesToEnemiesCollisions() {
-		let array = this.level.enemies;
-		for (let index = 0; index < array.length; index++) {
-			const enemy = array[index];
-
-			for (let index2 = 0; index2 < array.length; index2++) {
-				const enemy2 = array[index2];
-				if (index2 == index) {
-					continue;
-				}
-				if (Game.isColliding(enemy, enemy2)) {
-					if (enemy.direction == enemy2.direction) {
-						if (enemy.x > enemy2.x)
-							enemy.direction = -enemy.direction;
-						if (enemy.x < enemy2.x)
-							enemy2.direction = -enemy2.direction;
-					} else {
-						enemy2.direction = -enemy2.direction;
-						enemy.direction = -enemy.direction;
-					}
-
-				}
-			}
-		}
+	handleKeyUp(event) {
+		const k = event.key;
+		Game.stopAction = event.code;
+		Game.requestJump = !(event.code == "Space") && Game.requestJump;
+		Game.requestRightMove = !(k == "ArrowRight") && Game.requestRightMove;
+		Game.requestLeftMove = !(k == "ArrowLeft") && Game.requestLeftMove;
+		Game.requestThrow = !(k == "d") && Game.requestThrow;
 	}
 }

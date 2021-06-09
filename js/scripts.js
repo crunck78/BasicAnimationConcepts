@@ -15,4 +15,5 @@ window.addEventListener("load", async ()=>{
 	requestAnimationFrame(newGame.update.bind(newGame));
 	//newGame.listenForTouches(newGame.level.pepe, newGame);
 	newGame.listenForKeys(newGame.level.pepe, newGame);
+	// newGame.listenForKeys2();
 });

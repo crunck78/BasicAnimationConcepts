@@ -6,6 +6,7 @@ export class Enemy extends Item{
 		super(xPos, yPos, distance, scale, width, height, color, status, animationObj);
 		this.movementSpeed = Math.random() * 2;
 		this.canHit = true;
+		this.damage = 20;
 	}
 
 	update(timeStamp){

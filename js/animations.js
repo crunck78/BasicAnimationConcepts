@@ -73,7 +73,6 @@ async function createAnimations(array) {
     await asyncForEach(array, async (imgSrc) => {
         let img = new Image();
         let response = await fetch(imgSrc);
-        console.log(response);
         let imgBlob = await response.blob();
         let objectURL = URL.createObjectURL(imgBlob);
         img.src = objectURL;
@@ -84,6 +83,6 @@ async function createAnimations(array) {
 
 const asyncForEach = async (array, callback) => {
     for (let index = 0; index < array.length; index++) {
-        await callback(array[index], index, array)
+        await callback(array[index], index, array);
     }
 }

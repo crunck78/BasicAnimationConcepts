@@ -38,6 +38,13 @@ export class Draw {
 	}
 
 	/**
+	 * Abstract methode. Implemented by the Child Class
+	 */
+	checkForCollisions(){
+		throw new TypeError("Methode has no implementation!");
+	}
+
+	/**
 	 * Holds the first Canvas of the DOM
 	 * @type HTMLCanvasElement
 	 */

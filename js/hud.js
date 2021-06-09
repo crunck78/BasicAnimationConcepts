@@ -13,10 +13,10 @@ export class Hud extends Draw {
     }
 
     init() {
-        this.hud.classList.remove("d-none");
+        this.show();
         this.hud.innerHTML = `
         <div class="hud-element">
-            <img id="life-bar" src="img/HUD/life-bar/life_100.png">
+            <img id="life-bar" src="img/HUD/life-bar/life_${this.player.healt}.png">
         </div>
 
         <div id="item-list" class="hud-element">
@@ -32,13 +32,22 @@ export class Hud extends Draw {
         `;
     }
 
-    update(){
+    update(timeStamp){
         this.coinsCounter.innerHTML = this.player.coins;
         this.bottlesCounter.innerHTML = this.player.bottles;
+        this.lifeBar.src = `img/HUD/life-bar/life_${this.player.healt}.png`;
     }
 
-    showHud() {
+    show() {
         this.hud.classList.remove("d-none");
+    }
+
+    hide() {
+        this.hud.classList.add("d-none");
+    }
+
+    toggle(){
+        this.hud.classList.toggle("d-none");
     }
 
 }

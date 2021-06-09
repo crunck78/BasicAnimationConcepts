@@ -16,6 +16,7 @@ export class Model extends Draw {
 		this.currentImg;
 		this.startUpdate;
 		this.direction = RIGHT_DIRECTION;
+		this.intervalHit;
 		this.intervalCounter;
 		this.movementSpeed = 2;
 		this.collisionOffset = { x: [0, 0], y: [0, 0] }; //offsets the collision detection
@@ -26,20 +27,20 @@ export class Model extends Draw {
 	 * Draws a Model on a initialized canvas. Canvas is to be initialized using the static methode init of the Draw class
 	 */
 	draw() {
-		if(this.isInsideCanvas()){
+		if (this.isInsideCanvas()) {
 			if (this.currentImg && this.currentImg.complete) {
 				Draw.ctx.save();
-	
+
 				//Draw.ctx.translate(this.x, this.y);
 				Draw.ctx.scale(this.direction, 1);
 				if (Game.debugMode) {
 					if (this.wireframeMode)
 						this.drawWireframe();
 				}
-				
+
 				Draw.ctx.drawImage(this.currentImg, this.x * this.direction, this.y, this.width * this.direction, this.height);
 				Draw.ctx.restore();
-	
+
 				if (Game.debugMode)
 					this.showInfo();
 			}
@@ -115,8 +116,25 @@ export class Model extends Draw {
 	 * @returns {boolean} - true if this instance right from obj, or false if not
 	 */
 	isRightFrom(obj) {
-		//		right side distance from obj
 		return (this.x - obj.x - obj.width) > 0;
+	}
+
+	/**
+	 * Check if this instance is intersecting the obj's x axie
+	 * @param {Model} obj - Model instace to check if this instance is intersecting  obj on the x axie.
+	 * @returns {boolean} - true if this instance intersects obj  on the x axie, or false if not
+	 */
+	isIntersectingX(obj) {
+		return !(this.isLeftFrom(obj) || this.isRightFrom(obj));
+	}
+
+	/**
+	 * Check if this instance is intersecting the obj's y axie
+	 * @param {Model} obj - Model instace to check if this instance is intersecting  obj on the y axie.
+	 * @returns {boolean} - true if this instance intersects obj on the y axie, or false if not
+	 */
+	isIntersectingy(obj) {
+		return !(this.isAbove(obj) || this.isBelow(obj));
 	}
 
 	/**
@@ -136,7 +154,7 @@ export class Model extends Draw {
 	/**
 	 * Checks if the Model is inside Canvas
 	 */
-	isInsideCanvas(){
+	isInsideCanvas() {
 		return !(this.x > Draw.cnv.width || (this.x + this.width) < NULL);
 	}
 
