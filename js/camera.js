@@ -1,6 +1,4 @@
-
-
 export class Camera{
-  static x;
-  static y;
+  static x = 10;
+  static y = 0;
 }

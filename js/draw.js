@@ -1,10 +1,16 @@
 // import { Model } from "../models/model.js";
 // import { Scene } from "../models/scene.js";
+import { Camera } from "./camera.js";
 
 export class Draw {
 	constructor() {
 		if (new.target === Draw) {
 			throw new TypeError("Cannot construct Draw instances directly");
+		}else{
+			this.startUpdate;
+			this.intervalCounter;
+			this.animationInterval = 60;
+			this.animationIndex = 0;
 		}
 	}
 
@@ -18,7 +24,7 @@ export class Draw {
 	/**
 	 * Abstract methode. Implemented by the Child Class
 	 */
-	update() {
+	serStatus(currentStatus){
 		throw new TypeError("Methode has no implementation!");
 	}
 
@@ -66,7 +72,9 @@ export class Draw {
 	 */
 	static drawElements(elements) {
 		elements.forEach(element => {
+			Draw.ctx.save();
 			element.draw();
+			Draw.ctx.restore();
 		});
 	}
 
@@ -78,7 +86,6 @@ export class Draw {
 	 */
 	static moveElementsRight(elements, movementSpeed) {
 		elements.forEach(element => {
-			//element.x -= movementSpeed * element.distance;
 			element.moveRight(movementSpeed);
 		});
 	}
@@ -91,7 +98,6 @@ export class Draw {
 	 */
 	static moveElementsLeft(elements, movementSpeed) {
 		elements.forEach(element => {
-			// element.x += movementSpeed * element.distance;
 			element.moveLeft(movementSpeed);
 		});
 	}
@@ -109,11 +115,13 @@ export class Draw {
 	 */
 	static drawModelRect(elm) {
 		Draw.ctx.save();
+		// if(elm.tracking)
+			Draw.ctx.translate(Camera.x * elm.distance, Camera.y);
 		Draw.ctx.beginPath();
 		Draw.ctx.rect(elm.x * elm.direction, elm.y, elm.width * elm.direction, elm.height);
 		Draw.ctx.fillStyle = `${elm.color}`;
 		Draw.ctx.fill();
-		//Draw.ctx.stroke();
+		//Draw.ctx.translate(-Camera.x * elm.distance, Camera.y);
 		Draw.ctx.restore();
 	}
 
@@ -123,12 +131,28 @@ export class Draw {
 	static init() {
 		if (!Draw.cnv) {
 			Draw.cnv = document.getElementsByTagName("canvas")[0];
-			//Draw.cnv.style.border = `2px solid black`;
 			Draw.cnv.classList.remove("d-none");
-			Draw.cnv.width = window.innerWidth;
-			Draw.cnv.height = window.innerHeight;
 			Draw.ctx = Draw.cnv.getContext("2d");
-			Draw.GROUND_POS = Draw.cnv.height - 90;
+			Draw.GROUND_POS = Draw.cnv.height - 50; //Adjust to fit your enviorment.
+		}
+	}
+
+	/**
+	 * 
+	 * @param {*} timeStamp 
+	 */
+	 update(timeStamp) {
+		if (this.startUpdate === undefined) {// update start
+			this.startUpdate = timeStamp;// set timer to 0
+			this.intervalCounter = this.animationInterval;
+		}
+		const elapse = Math.trunc(timeStamp - this.startUpdate);
+
+		this.currentImg = this.animations[this.status][this.animationIndex % this.animations[this.status].length];
+
+		if (elapse > this.intervalCounter) {
+			this.intervalCounter = this.animationInterval + elapse;
+			this.animationIndex++;
 		}
 	}
 }

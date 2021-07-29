@@ -9,25 +9,29 @@
 
 <body>
 	<div id="load">Loading...</div>
-	<div id="hud" class="d-none">
-		<!--Container for HUD-->
-	</div>
-	<canvas id="cnv" class="d-none"></canvas>
-	<div id="touchpad" class="touchpad-container">
-		<div class="pad-container">
-			L-
-			<button type="button" id="left-pad" class="pad"></button>
-			<button type="button" id="right-pad" class="pad"></button>
-			-R
-		</div>
 
-		<div class="pad-container">
-			T-
-			<button type="button" id="trow-pad" class="pad"></button>
-			<button type="button" id="jump-pad" class="pad"></button>
-			-J
+	<div id="game-container">
+		<div id="hud" class="d-none">
+			<!--Container for HUD-->
+		</div>
+		<canvas width="760" height="480" ontouchstart="handleTouchStart(event)" ontouchend="handleTouchEnd(event)" id="cnv" class="d-none"></canvas>
+		<div id="touchpad" class="touchpad-container d-none">
+			<div class="pad-container">
+				
+				<button type="button" id="left-pad" class="pad">L</button>
+				<button type="button" id="right-pad" class="pad">R</button>
+				
+			</div>
+	
+			<div class="pad-container">
+				
+				<button type="button" id="trow-pad" class="pad">T</button>
+				<button type="button" id="jump-pad" class="pad">J</button>
+				
+			</div>
 		</div>
 	</div>
+
 	<div id="log"></div>
 
 </body>

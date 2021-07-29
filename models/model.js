@@ -1,9 +1,11 @@
 import { RIGHT_DIRECTION, WIREFRAME_ON, WIREFRAME_OFF, NULL } from "../js/constants.js";
 import { Game } from "../js/game.js";
 import { Draw } from "./../js/draw.js"
+import { Camera } from "./../js/camera.js";
 
 export class Model extends Draw {
-	constructor(xPos, yPos, distance, scale, width, height, color) {
+
+	constructor(xPos = 0, yPos = 0, distance = 1, scale = 1, width, height, color = "white", status, animationObj) {
 		super();
 		this.wireframeMode = WIREFRAME_ON;
 		this.x = xPos;
@@ -14,45 +16,68 @@ export class Model extends Draw {
 		this.scale = scale; //between 0 and 1, closing to 1 means image size is closer to original, closing to 0 means image size ist smaller
 		this.color = color;
 		this.currentImg;
-		this.startUpdate;
+
 		this.direction = RIGHT_DIRECTION;
 		this.intervalHit;
-		this.intervalCounter;
-		this.movementSpeed = 2;
+
+		this.movementSpeed = 0; // was 2
 		this.collisionOffset = { x: [0, 0], y: [0, 0] }; //offsets the collision detection
 		this.collisionImmun = false;
+		this.tracking = false;
+
+		this.status = status;
+		this.groundPos = Draw.GROUND_POS - height;
+		this.isMovingLeft = false;
+		this.isMovingRight = true;
+
+		this.requestMoveRight = 0;
+		this.requestMoveLeft = 0;
+		this.animations = animationObj ? animationObj : {};
+		this.currentImg = animationObj ? animationObj[status][0] : new Image();
+		this.startMove;
+		this.startHit;
+		this.moveInProgress = false;
+		this.collisionInProgress = false;
 	}
 
 	/**
 	 * Draws a Model on a initialized canvas. Canvas is to be initialized using the static methode init of the Draw class
 	 */
 	draw() {
+		/**
+		 * Only Draw Instance if is inside Canvas
+		 */
 		if (this.isInsideCanvas()) {
+			if (Game.debugMode)
+				this.showInfo();
 			if (this.currentImg && this.currentImg.complete) {
 				Draw.ctx.save();
-
-				//Draw.ctx.translate(this.x, this.y);
 				Draw.ctx.scale(this.direction, 1);
-				if (Game.debugMode) {
-					if (this.wireframeMode)
-						this.drawWireframe();
-				}
-
+				// if (this.tracking)
+				Draw.ctx.translate(Camera.x * this.distance, Camera.y * this.distance);
 				Draw.ctx.drawImage(this.currentImg, this.x * this.direction, this.y, this.width * this.direction, this.height);
+				// if(this.tracking)
+				// 	Draw.ctx.translate(-Camera.x * this.distance, -Camera.y * this.distance);
+				if (Game.debugMode && this.wireframeMode)
+					this.drawWireframe();
 				Draw.ctx.restore();
-
-				if (Game.debugMode)
-					this.showInfo();
 			}
-			else
+			else { //image is not commplete or is missing or is broken or not right set
+				//TODO Match the draw from above // test wihout imgs
 				Draw.drawModelRect(this);
+			}
 		}
 	}
 
 	showInfo() {
+		//TODO FIX ON DIRECTION CHANGE
+		if (this.tracking)
+			Draw.ctx.translate(Camera.x * this.distance, Camera.y * this.distance);
 		Draw.ctx.font = `bold 16px sans-serif`;
 		Draw.ctx.fillStyle = this.color;
 		Draw.ctx.fillText(Math.trunc(this.x) + ", " + Math.trunc(this.y) + ", " + this.width + ", " + this.height, this.x, this.y);
+		if (this.tracking)
+			Draw.ctx.translate(-Camera.x * this.distance, -Camera.y * this.distance);
 	}
 
 	drawWireframe() {
@@ -133,22 +158,17 @@ export class Model extends Draw {
 	 * @param {Model} obj - Model instace to check if this instance is intersecting  obj on the y axie.
 	 * @returns {boolean} - true if this instance intersects obj on the y axie, or false if not
 	 */
-	isIntersectingy(obj) {
+	isIntersectingY(obj) {
 		return !(this.isAbove(obj) || this.isBelow(obj));
 	}
 
 	/**
-	 * Abstract methode. Implemented by the Child Class
+	 * 
+	 * @param {*} timeStamp 
 	 */
-	setStatus(currentStatus) {
-		throw new TypeError("Methode has no implementation!");
-	}
+	update(timeStamp) {
 
-	/**
-	 * Abstract methode. Implemented by the Child Class
-	 */
-	update() {
-		throw new TypeError("Methode has no implementation!");
+		super.update(timeStamp);
 	}
 
 	/**

@@ -13,9 +13,10 @@ export class Hud extends Draw {
     }
 
     init() {
+        //TODO ADD COINS UND BOTTLES BAR
         this.show();
         this.hud.innerHTML = `
-        <div class="hud-element">
+        <div id="bars-container" class="hud-element">
             <img id="life-bar" src="img/HUD/life-bar/life_${this.player.healt}.png">
         </div>
 

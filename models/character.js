@@ -1,10 +1,16 @@
-import { Item } from "./item.js"
 import { GRAVITY } from "./../js/constants.js"
 import { Log } from "./../js/log.js"
 import { Game } from "./../js/game.js"
 import { Model } from "./model.js";
+import { Enemy } from "./enemy.js";
+import { Item } from "./item.js";
+import { World } from "./world.js";
+import { ACTIONS, RIGHT_DIRECTION, LEFT_DIRECTION } from "./../js/constants.js";
+import { Coin } from "./coin.js";
+import { Bottle } from "./bottle.js";
+import { Camera } from "../js/camera.js";
 
-export class Character extends Item {
+export class Character extends Model {
 	constructor(xPos, yPos, distance, scale, width, height, color, status, animationObj, bottleAnimations) {
 		super(xPos, yPos, distance, scale, width, height, color, status, animationObj);
 		this.startJump;
@@ -16,8 +22,10 @@ export class Character extends Item {
 		this.throwVelocity = -98.1 * 6;
 		this.throwAngle = 0.52359878; //Radians -> 45 Degrees
 		this.bottle = new Item(xPos, yPos, distance, scale, 50, 50, "yellow", "throwed", bottleAnimations);
+		this.bottle.tracking = false;
 		this.bottle.initY = this.y;
-		this.bottles = 0;
+		this.bottle.initX = this.x;
+		this.bottles = 10;
 		this.coins = 0;
 		this.canJump = true;
 		this.isImmun = false;
@@ -69,18 +77,18 @@ export class Character extends Item {
 	 * @param {string} currentStatus - actual status value of Character
 	 */
 	setStatus(currentStatus) {
-		
+
 		if (this.isHit) {
 			if (currentStatus != "hit") {
 				this.animationIndex = 0;
 				this.status = "hit";
-				this.animationInterval = 300;
+				this.animationInterval = 100;
 			}
 		} else if (this.jumpInProgess) {
 			if (currentStatus != "jump") {
 				this.animationIndex = 0;
 				this.status = "jump";
-				this.animationInterval = 300;
+				this.animationInterval = 100;
 			}
 
 		} else if (this.moveInProgress) {
@@ -94,31 +102,74 @@ export class Character extends Item {
 			if (currentStatus != "idle") {
 				this.animationIndex = 0;
 				this.status = "idle";
-				this.animationInterval = 300;
+				this.animationInterval = 100;
 			}
 		}
 	}
 
 	update(timeStamp) {
-		// this.isMovingRight = Game.requestRightMove && !this.isMovingRight;
-		// this.isMovingLeft = Game.requestLeftMove && !this.isMovingLeft;
-		// this.moveInProgress = this.isMovingRight || this.isMovingLeft;
+		if(this.isMovingLeft){
+			this.x -= 5;
+		}
+
+		if(this.isMovingRight){
+			this.x += 5;
+		}
+
+		if(this.tracking)
+			Camera.x = -this.x + 10; // plus start Position
+		
 		//TODO SET DIRECTION
 		super.update(timeStamp);
+	}
+
+	handleActionsRequests(timeStamp){
+		if (ACTIONS["moveLeft"]["requested"] && !this.isMovingLeft) {
+			this.isMovingLeft = true;
+			this.direction = LEFT_DIRECTION;
+			this.moveInProgress = true;
+		}
+
+		if (!ACTIONS["moveLeft"]["requested"] && this.isMovingLeft) {
+			this.isMovingLeft = false;
+			this.moveInProgress = false;
+		}
+
+		if (ACTIONS["moveRight"]["requested"] && !this.isMovingRight) {
+			this.isMovingRight = true;
+			this.direction = RIGHT_DIRECTION;
+			this.moveInProgress = true;
+		}
+
+		if (!ACTIONS["moveRight"]["requested"] && this.isMovingRight) {
+			this.isMovingRight = false;
+			this.moveInProgress = false;
+		}
+
+		if (ACTIONS["jump"]["requested"] && !this.jumpInProgess) {
+			window.requestAnimationFrame(this.jump.bind(this));
+		}
+
+		if (ACTIONS["throw"]["requested"] && !this.throwInProgress) {
+
+			this.bottle.initY = this.y;
+			this.bottle.initX = !this.tracking ? this.x : this.x + (Camera.x * this.distance);
+			window.requestAnimationFrame(this.throwBottle.bind(this));
+		}
 	}
 
 	/**
 	 * 
 	 * @param {Model[]} models
 	 */
-	checkForCollisions( models ){
-		for(let i = 0; i < models.length; i++){
+	checkForCollisions(models, worldRef) {
+		for (let i = 0; i < models.length; i++) {
 			const model = models[i];
-			if( model instanceof Enemy){
-				this.checkEnemyCollision(model);
+			if (model instanceof Enemy) {
+				this.checkEnemyCollision(model, worldRef);
 			}
-			if( model instanceof item){
-				this.checkItemCollision(model);
+			if (model instanceof Item) {
+				this.checkItemCollision(model, worldRef);
 			}
 		}
 	}
@@ -127,15 +178,47 @@ export class Character extends Item {
 	 * Check for Enemy Collision
 	 * @param {Enemy} enemy -
 	 */
-	checkEnemyCollision(enemy){
-		
+	checkEnemyCollision(enemy, worldRef) {
+		// if (enemy.status != "dead") {
+		// 	if (World.isColliding(this, enemy)) {
+		// 		if (enemy.canHit) {
+		// 			this.isHit = true;
+		// 			if (this.startHit === undefined) {
+		// 				console.log("FIRST HIT");
+		// 				this.startHit = timeStamp;
+		// 				this.intervalHit = IMMUNITY_TIME;
+		// 				this.healt -= enemy.damage;
+		// 			}
+		// 			const elapse = Math.trunc(timeStamp - this.startHit);
+		// 			if (elapse > this.intervalHit) {
+		// 				this.intervalHit = 1000 + elapse;
+		// 				this.healt -= enemy.damage;
+		// 			}
+		// 			return;
+		// 		} else {
+		// 			enemy.status = "dead";
+		// 			this.isHit = false;
+		// 			this.startHit = timeStamp;
+		// 		}
+		// 	} else {
+		// 		this.isHit = false;
+		// 		//this.startHit = timeStamp;
+		// 	}
+		// 	enemy.canHit = this.isIntersectingX(enemy) && !this.pepe.isAbove(enemy);
+		// }
 	}
 
 	/**
 	 * Check for Item Collision
 	 * @param {Item} item -
 	 */
-	checkItemCollision(item){
-
+	checkItemCollision(item, worldRef) {
+		if (World.isColliding(this, item)) {
+			if (item instanceof Coin)
+				this.coins++;
+			if (item instanceof Bottle)
+				this.bottles++;
+			worldRef.deleteElement(item);
+		}
 	}
 }

@@ -7,16 +7,20 @@ import { Background } from "./background.js"
 import { Model } from "./model.js"
 import { Bottle } from "./bottle.js"
 import { Coin } from "./coin.js"
-import { ENEMY_LENGTH, IMMUNITY_TIME, ITEM_LENGTH, SCENE_LENGTH, LEFT_DIRECTION, RIGHT_DIRECTION, LEFT_SIDE, RIGHT_SIDE, ABOVE_SIDE, BELOW_SIDE, DEBUG_ON, LOG } from "../js/constants.js"
+import { ENEMY_LENGTH, IMMUNITY_TIME, ITEM_LENGTH, SCENE_LENGTH, LEFT_DIRECTION, RIGHT_DIRECTION, LEFT_SIDE, RIGHT_SIDE, ABOVE_SIDE, BELOW_SIDE, DEBUG_ON, LOG, ACTIONS } from "../js/constants.js"
+import { Camera } from "../js/camera.js"
 
 export class World extends Draw {
 	constructor(allAnimations) {
 		super();
-		this.worldLeftEdge = new Model(10, 0, 1, 1, 1, Draw.cnv.height, "white");
-		this.worldRightEdge = new Model(Draw.cnv.width * 2, 0, 1, 1, 1, Draw.cnv.height, "white");
-		this.worldCenter = new Model(Draw.cnv.width / 2, 0, 1, 1, 1, Draw.cnv.height, "white");
+		this.worldLeftEdge = new Model(10, 0, 1, 1, 1, Draw.cnv.height);
+		this.worldRightEdge = new Model(Draw.cnv.width * 2, 0, 1, 1, 1, Draw.cnv.height);
+		this.worldCenter = new Model(Draw.cnv.width / 2, 0, 1, 1, 1, Draw.cnv.height);
+		this.worldCenter.tracking = false;
 		this.sky = new Background(0, 0, 1, 1, Draw.cnv.width, Draw.cnv.height, "white", "img/sky.png");
+		this.sky.tracking = false;
 		this.pepe = new Character(10, Draw.GROUND_POS - (allAnimations.pepeAnimations["idle"][0].height * 0.2), 1, 1, allAnimations.pepeAnimations["idle"][0].width * 0.2, allAnimations.pepeAnimations["idle"][0].height * 0.2, "blue", "walk", allAnimations.pepeAnimations, allAnimations.bottleAnimations);
+		this.pepe.tracking = false;
 		this.scenes = [];
 		for (let i = 0; i < SCENE_LENGTH; i++) {
 			this.scenes.push(new Scene(i));
@@ -37,21 +41,20 @@ export class World extends Draw {
 	/**
 	 * Issues all Models and Scenes draw calls to draw all Models instances on canvas.
 	 */
-	draw() {
-		//Draw.clearCanvas();
-		this.sky.draw();
+	draw(timeStamp) {
 		Draw.ctx.save();
-		Draw.ctx.translate(0, 0);
-		World.drawGroundLine();
+
+		this.sky.draw();
 		Draw.drawElements(this.scenes);
 		Draw.drawElements(this.items);
 		Draw.drawElements(this.enemies);
 		this.worldLeftEdge.draw();
 		this.worldRightEdge.draw();
-		Draw.ctx.restore();
+		this.worldCenter.draw();
 		this.pepe.draw();
 		World.drawGroundLine();
-		this.worldCenter.draw();
+		
+		Draw.ctx.restore();
 	}
 
 	/**
@@ -59,9 +62,9 @@ export class World extends Draw {
 	 * @param {number} timeStamp -
 	 */
 	update(timeStamp) {
+		this.setCameraFocuse();
 		this.pepe.setStatus(this.pepe.status);
 		this.pepe.update(timeStamp);
-		//Draw.moveElementsRight(this.enemies);
 		this.enemies.forEach(enemy => {
 			enemy.update(timeStamp);
 		});
@@ -73,30 +76,13 @@ export class World extends Draw {
 	 */
 	checkForCollisions(timeStamp) {
 		//TODO For Now Only Character to World Collision Checks
-		this.pepe.checkForCollisions(this.enemies);
-		this.pepe.checkForCollisions(this.items);
+		this.pepe.checkForCollisions(this.enemies, this);
+		this.pepe.checkForCollisions(this.items, this);
 	}
 
-	/**
-	 * Moves all choosen Models and Scenes instances to the left by the characters movement speed, creating the illusion of character right movement.
-	 */
-	moveLeft(timeStamp) {
-		Draw.moveElementsLeft(this.scenes, this.pepe.movementSpeed);
-		Draw.moveElementsLeft(this.items, this.pepe.movementSpeed);
-		Draw.moveElementsLeft(this.enemies, this.pepe.movementSpeed);
-		this.worldLeftEdge.moveLeft(this.pepe.movementSpeed);
-		this.worldRightEdge.moveLeft(this.pepe.movementSpeed);
-	}
 
-	/**
-	* Moves all choosen Models and Scenes instances to the right by the characters movement speed,, creating the illusion of character left movement.
-	*/
-	moveRight(timeStamp) {
-		Draw.moveElementsRight(this.scenes, this.pepe.movementSpeed);
-		Draw.moveElementsRight(this.items, this.pepe.movementSpeed);
-		Draw.moveElementsRight(this.enemies, this.pepe.movementSpeed);
-		this.worldLeftEdge.moveRight(this.pepe.movementSpeed);
-		this.worldRightEdge.moveRight(this.pepe.movementSpeed);
+	setCameraFocuse() {
+
 	}
 
 	/**
@@ -106,52 +92,90 @@ export class World extends Draw {
 	 * @returns {boolean} true || false
 	 */
 	static isColliding(obj1, obj2) {
-		return ((obj2.x - obj1.x + obj2.collisionOffset.x[RIGHT_SIDE]) < (obj1.width - obj1.collisionOffset.x[LEFT_SIDE]) && (obj1.x - obj2.x + obj1.collisionOffset.x[LEFT_SIDE]) < (obj2.width - obj2.collisionOffset.x[RIGHT_SIDE])) && ((obj2.y - obj1.y + obj2.collisionOffset.y[ABOVE_SIDE]) < (obj1.height - obj1.collisionOffset.y[BELOW_SIDE])) && ((obj1.y - obj2.y + obj1.collisionOffset.y[BELOW_SIDE]) < (obj2.height - obj1.collisionOffset.y[ABOVE_SIDE]));
+
+		// let translateOffsetX1 = !obj1.tracking ? obj1.x : obj1.x + (Camera.x * obj1.distance);
+		// let translateOffsetX2 = !obj2.tracking ? obj2.x : obj2.x + (Camera.x * obj2.distance);
+		// let translateOffsetY1 = !obj1.tracking ? obj1.y : obj1.y + (Camera.y * obj1.distance);
+		// let translateOffsetY2 = !obj2.tracking ? obj2.y : obj2.y + (Camera.y * obj2.distance);
+
+		let translateOffsetX1 = obj1.x;//!obj1.tracking ? obj1.x : obj1.x + (Camera.x * obj1.distance);
+		let translateOffsetX2 = obj2.x;//!obj2.tracking ? obj2.x : obj2.x + (Camera.x * obj2.distance);
+		let translateOffsetY1 = obj1.y;//!obj1.tracking ? obj1.y : obj1.y + (Camera.y * obj1.distance);
+		let translateOffsetY2 = obj2.y;//!obj2.tracking ? obj2.y : obj2.y + (Camera.y * obj2.distance);
+
+		return ((translateOffsetX1 + translateOffsetX2 - obj2.collisionOffset.x[RIGHT_SIDE])
+			< (obj1.width - obj1.collisionOffset.x[LEFT_SIDE])
+			&& (translateOffsetX1 - translateOffsetX2 + obj1.collisionOffset.x[LEFT_SIDE])
+			< (obj2.width - obj2.collisionOffset.x[RIGHT_SIDE]))
+			&& ((translateOffsetY2 - translateOffsetY1 + obj2.collisionOffset.y[ABOVE_SIDE])
+				< (obj1.height - obj1.collisionOffset.y[BELOW_SIDE]))
+			&& ((translateOffsetY1 - translateOffsetY2 + obj1.collisionOffset.y[BELOW_SIDE])
+				< (obj2.height - obj1.collisionOffset.y[ABOVE_SIDE]));
 	}
 
-	checkPepeToItemsCollision(timeStamp) {
-		this.items.forEach((item, index) => {
-			if (World.isColliding(this.pepe, item)) {
-				this.items.splice(index, 1);
-				if (item instanceof Coin)
-					this.pepe.coins++;
-				if (item instanceof Bottle)
-					this.pepe.bottles++;
-			}
-		});
+	deleteElement(elm) {
+		if (elm instanceof Enemy)
+			this.enemies.splice(this.enemies.indexOf(elm), 1);
+		if (elm instanceof Item)
+			this.items.splice(this.items.indexOf(elm), 1);
 	}
 
-	checkPepeToEnemiesCollision(timeStamp) {
-		for (let i = 0; i < this.enemies.length; i++) {
-			const enemy = this.enemies[i];
-			if (enemy.status != "dead") {
-				if (World.isColliding(this.pepe, enemy)) {
-					if (enemy.canHit) {
-						this.pepe.isHit = true;
-						if (this.pepe.startHit === undefined) {
-							console.log("FIRST HIT");
-							this.pepe.startHit = timeStamp;
-							this.pepe.intervalHit = IMMUNITY_TIME;
-							this.pepe.healt -= enemy.damage;
-						}
-						const elapse = Math.trunc(timeStamp - this.pepe.startHit);
-						if (elapse > this.pepe.intervalHit) {
-							this.pepe.intervalHit = 1000 + elapse;
-							this.pepe.healt -= enemy.damage;
-						}
-						break;
-					} else {
-						enemy.status = "dead";
-						this.pepe.isHit = false;
-						this.pepe.startHit = timeStamp;
-					}
-				} else {
-					this.pepe.isHit = false;
-					//this.pepe.startHit = timeStamp;
-				}
-				enemy.canHit = this.pepe.isIntersectingX(enemy) && !this.pepe.isAbove(enemy);
-			}
-		};
+	handleActionsRequests(timeStamp) {
+		this.pepe.handleActionsRequests(timeStamp);
+
+		// let translateOffsetXLeft = this.worldLeftEdge.focused ? this.worldLeftEdge.x : this.worldLeftEdge.x + (Camera.x * this.worldLeftEdge.distance);
+		// let translateOffsetXRight = this.worldRightEdge.focused ? this.worldRightEdge.x : this.worldRightEdge.x + (Camera.x * this.worldRightEdge.distance);
+
+		// if (ACTIONS['moveLeft']['requested']) {
+		// 	// if (Camera.x <= 0 - 5 || this.pepe.x >= 0 - 5){
+		// 	// 	if(this.pepe.x >= 0 - 5)
+		// 	// 		this.pepe.x -= 5;
+		// 	// 	else
+		// 	// 		Camera.x += 5;
+		// 	// }
+				
+		// }
+		// if (ACTIONS['moveRight']['requested']) {
+		// 	if(translateOffsetXRight >= Draw.cnv.width + 5){
+		// 		if(!World.isColliding(this.pepe, this.worldCenter))
+		// 			this.pepe.x += 5;
+		// 		else	
+		// 			Camera.x -= 5;
+					
+		// 	}
+		// }
+
+
+		// if (translateOffsetXLeft <= 0) {
+		// 	if (!World.isColliding(this.pepe, this.worldLeftEdge)) {
+		// 		//this.focuseWorld();
+		// 	}
+		// } else if (translateOffsetXRight <= Draw.cnv.width) {
+		// 	if (!World.isColliding(this.pepe, this.worldCenter)) {
+		// 		//this.focuseWorld();
+		// 	} else {
+		// 		//this.focuseChar();
+		// 	}
+		// } else {
+		// 	//this.focuseChar();
+		// }
+
+		// if (!World.isColliding(this.pepe, this.worldRightEdge)) {
+		// 	if (!World.isColliding(this.pepe, this.worldCenter)) {
+		// 		//this.focuseWorld();
+		// 	} else {
+		// 		if (translateOffsetXRight >= Draw.cnv.width) {
+		// 			//this.focuseChar();
+		// 		}
+
+		// 		else {
+		// 			if (!World.isColliding(this.pepe, this.worldRightEdge)) {
+		// 				//this.focuseWorld();
+		// 			}
+
+		// 		}
+		// 	}
+		// }
 	}
 
 	/**

@@ -8,11 +8,10 @@ body {
 #hud {
   position: absolute;
   top: 0;
-  width: 688px;
-  /*canvas width - hud padding*/
-  height: 449px;
-  /*canvas height - hud padding*/
-  /*background-color: grey;*/
+  bottom: 0;
+  left: 0;
+  right: 0;
+ 
   z-index: 1;
   display: flex;
   flex-direction: row;
@@ -21,18 +20,19 @@ body {
 }
 
 #life-bar {
-  width: 200px;
+  width: 100%;
   object-fit: contain;
 }
 
 #item-list img {
-  width: 60px;
-  height: 60px;
+  width: 80%;
+  height: auto;
   object-fit: cover;
 }
 
 .hud-element {
   height: fit-content;
+  width: 33%;
 }
 
 #item-list {
@@ -45,30 +45,42 @@ body {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin-right: 40px;
+  /* margin-right: 40px; */
+  flex-grow: 1;
+  align-items: center;
 }
 
 .counter {
-  font-size: 20px;
+  /* font-size: 20px; */
   color: white;
+  margin: 0;
+}
+
+#touchpad{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+
+  height: 10%;
 }
 
 .touchpad-container {
-  background-color: white;
+  /* background-color: white; */
   display: flex;
   justify-content: space-between;
-  width: 720px;
 }
 
 .pad {
-  width: 60px;
-  height: 60px;
+  width: 20%;
+  height: 100%;
 }
 
 .pad-container {
   display: flex;
   justify-content: space-between;
-  width: 300px;
+  flex-grow: 1;
   align-items: center;
 }
 
@@ -80,4 +92,33 @@ body {
   position: absolute;
   top: 0;
   left: 0;
+}
+
+#game-container{
+  position: relative;
+  /* margin-top: 200px; */
+}
+
+canvas {
+  background-color: black;
+  display: block;
+}
+
+#touch-pad{
+  position: absolute;
+  bottom: 0;
+}
+
+/* Smartphones ----------- */
+@media only screen and (max-width: 760px) {
+  canvas {
+      width: 100%;
+  }
+}
+
+/* Smartphones ----------- */
+@media only screen and (max-height: 480px) {
+  canvas {
+      height: 100vh;
+  }
 }

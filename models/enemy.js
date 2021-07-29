@@ -1,7 +1,8 @@
 import { LEFT_DIRECTION, RIGHT_DIRECTION } from "../js/constants.js";
 import { Item } from "./item.js"
+import { Model } from "./model.js";
 
-export class Enemy extends Item{
+export class Enemy extends Model{
 	constructor(xPos, yPos, distance, scale, width, height, color, status, animationObj){
 		super(xPos, yPos, distance, scale, width, height, color, status, animationObj);
 		this.movementSpeed = Math.random() * 2;

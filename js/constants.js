@@ -58,13 +58,25 @@ const BELOW_SIDE = 0;
  */
 const GRAVITY = 9.81 * 100;
 
-export { LOG, 
-  RIGHT_DIRECTION, LEFT_DIRECTION, 
-  RIGHT_SIDE, LEFT_SIDE, ABOVE_SIDE, BELOW_SIDE, 
+const ACTIONS = {
+  jump: { key: "Space", requested: false },
+  moveLeft: { key: "ArrowLeft", requested: false },
+  moveRight: { key: "ArrowRight", requested: false },
+  throw: { key: "KeyT", requested: false },
+  // pause : { key : "KeyP", requested : false },
+  // play :  { key : "KeyP", requested : false }
+}
+
+export {
+  LOG,
+  RIGHT_DIRECTION, LEFT_DIRECTION,
+  RIGHT_SIDE, LEFT_SIDE, ABOVE_SIDE, BELOW_SIDE,
   WIREFRAME_OFF, WIREFRAME_ON,
-  DEBUG_ON, DEBUG_OFF, 
-  GRAVITY, 
+  DEBUG_ON, DEBUG_OFF,
+  GRAVITY,
   SHOW_INFO_ON, SHOW_INFO_OFF,
   SCENE_LENGTH, ENEMY_LENGTH, ITEM_LENGTH,
   NULL,
-  IMMUNITY_TIME };
+  IMMUNITY_TIME,
+  ACTIONS
+};

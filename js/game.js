@@ -1,6 +1,6 @@
 import { Draw } from "./draw.js"
 import { World } from "./../models/world.js"
-import { LEFT_DIRECTION, RIGHT_DIRECTION, LEFT_SIDE, RIGHT_SIDE, ABOVE_SIDE, BELOW_SIDE, DEBUG_ON, LOG } from "./constants.js"
+import { LEFT_DIRECTION, RIGHT_DIRECTION, LEFT_SIDE, RIGHT_SIDE, ABOVE_SIDE, BELOW_SIDE, DEBUG_ON, LOG, ACTIONS } from "./constants.js"
 import { Log } from "./log.js"
 import { Character } from "../models/character.js"
 import { Camera } from "./camera.js"
@@ -11,47 +11,53 @@ import { Hud } from "./hud.js"
 export class Game extends Draw {
 
 	static debugMode = DEBUG_ON;
-	//static gameInstances = 0;
-
-	/**
-	 * 
-	 */
-	static requestCollisionCheck;
-	static requestThrow;
-	static requestAction;
-	static stopAction;
-	/**
-	 * Holds the requestAnimationFrame index to Game.moveLeft, used to cancel the requestAnimationFrame.
-	 * ( See Game.listenForKeys and Game.listenForTouches )
-	 * @type number
-	 */
-	static requestMoveLeft;
-	static requestLeftMove;
-	/**
-	 * Holds the requestAnimationFrame index to Game.moveRight, used to cancel the requestAnimationFrame.
-	 * ( See Game.listenForKeys and Game.listenForTouches )
-	 * @type number
-	 */
-	static requestMoveRight;
-	static requestRightMove;
+	static gameInstances = 0;
+	
 	constructor(allAnimations) {
-		//Game.gameInstances++;
-		super();
-		this.level = new World(allAnimations);
-		this.hud = new Hud(this.level.pepe);
+		Game.gameInstances++;
 		Camera.x = 0;
 		Camera.y = 0;
-		//this.touchPadCont;
-		//this.startDraw;
-		this.startCollisionCkeck;
+		Draw.init();
+		super();
+		
+		this.level = new World(allAnimations);
+		this.hud = new Hud(this.level.pepe);
+		
+		this.drawStamp;
+		this.drawRequest = requestAnimationFrame(this.draw.bind(this));
+
+		this.updateStamp;
+		this.updateRequest = requestAnimationFrame(this.update.bind(this));
+		
+		this.collisionsStamp;
+		this.collisionsRequest = requestAnimationFrame(this.checkCollisions.bind(this));
+
+		this.actionsRequest;
+		this.actionsStamp = requestAnimationFrame(this.handleActionsRequests.bind(this));
+
+		this.listenForTouches();
+		this.listenForKeys();
 	}
 
 	/**
 	 * Draw Loop of Game
 	 */
-	draw() {
+	draw(timeStamp) {
+		if (this.drawStamp === undefined)
+			this.drawStamp = timeStamp;
+		Draw.ctx.save();
 		this.level.draw();
-		requestAnimationFrame(this.draw.bind(this));
+		Draw.ctx.restore();
+		this.drawRequest = requestAnimationFrame(this.draw.bind(this));
+	}
+
+	startDraw() {
+		this.drawRequest = requestAnimationFrame(this.draw.bind(this));
+	}
+
+	stopDraw() {
+		this.drawStamp = undefined;
+		this.cancelAnimationFrame(this.drawRequest);
 	}
 
 	/**
@@ -59,188 +65,133 @@ export class Game extends Draw {
 	 * @param {*} timeStamp -
 	 */
 	update(timeStamp) {
+		if (this.updateStamp === undefined)
+			this.updateStamp = timeStamp;
 		this.level.update(timeStamp);
 		this.hud.update(timeStamp);
-		requestAnimationFrame(this.update.bind(this));
+		this.updateRequest = requestAnimationFrame(this.update.bind(this));
+	}
+
+	startUpdate() {
+		this.updateRequest = requestAnimationFrame(this.update.bind(this));
+	}
+
+	stopUpdate() {
+		this.updateStamp = undefined;
+		this.cancelAnimationFrame(this.updateRequest);
 	}
 
 	/**
 	 * Check collisions Loop
 	 * @param {*} timeStamp - 
 	 */
-	 checkForCollisions(timeStamp) {
+	checkCollisions(timeStamp) {
+		if (this.collisionsStamp === undefined)
+			this.collisionsStamp = timeStamp;
 		this.level.checkForCollisions(timeStamp);
-		requestAnimationFrame(this.checkForCollisions.bind(this));
+		this.collisionsRequest = requestAnimationFrame(this.checkCollisions.bind(this));
 	}
 
-	/**
-	 * Keeps issuing the moveLeft methode of World's instance and 
-	 * updates the Game.requestMoveLeft static member, as long as request animation frame is not canceled.
-	 * ( See Game.listenForKeys and Game.listenForTouches for usage and cancelation. )
-	 */
-	moveLeft(timeStamp) {
-		if (this.level.worldLeftEdge.x >= 0) {
-			if (!World.isColliding(this.level.pepe, this.level.worldLeftEdge)) {
-				this.level.pepe.moveRight(this.level.pepe.movementSpeed);
-			}
-		} else if (this.level.worldRightEdge.x <= Draw.cnv.width) {
-			if (!World.isColliding(this.level.pepe, this.level.worldCenter)) {
-				this.level.pepe.moveRight(this.level.pepe.movementSpeed);
-			} else {
-				this.level.moveLeft(timeStamp);
-			}
-		} else {
-			this.level.moveLeft(timeStamp);
-		}
-		Game.requestMoveLeft = requestAnimationFrame(this.moveLeft.bind(this));
+	startCollisionsCheck() {
+		this.collisionsRequest = requestAnimationFrame(this.checkCollisions.bind(this));
 	}
 
+	stopCollisionsCheck() {
+		this.collisionsStamp = undefined;
+		this.cancelAnimationFrame(this.collisionsRequest);
+	}
+
+	handleActionsRequests(timeStamp) {
+		if(this.actionsStamp === undefined)
+			this.actionsStamp = timeStamp;
+		this.level.handleActionsRequests(timeStamp);
+		this.actionsRequest = requestAnimationFrame(this.handleActionsRequests.bind(this));
+	}
+
+	startHandleActionsRequests() {
+		this.actionsRequest = requestAnimationFrame(this.checkForCollisions.bind(this));
+	}
+
+	stopHandleActionsRequests() {
+		this.startActions = undefined;
+		this.cancelAnimationFrame(this.actionsRequest);
+	}
 
 	/**
 	 * 
-	 * @param {*} timeStamp 
+	 * @param {*} currentStatus 
 	 */
-
-	/**
-	 * Keeps issuing the moveRight methode of World's instance and 
-	 * updates the Game.requestMoveRight static member, as long as request animation frame is not canceled.
-	 * ( See Game.listenForKeys and Game.listenForTouches for usage and cancelation )
-	 */
-	moveRight(timeStamp) {
-		if (!World.isColliding(this.level.pepe, this.level.worldRightEdge)) {
-			if (!World.isColliding(this.level.pepe, this.level.worldCenter)) {
-				this.level.pepe.moveLeft(this.level.pepe.movementSpeed);
-			} else {
-				if (this.level.worldRightEdge.x >= Draw.cnv.width)
-					this.level.moveRight(timeStamp);
-				else {
-					if (!World.isColliding(this.level.pepe, this.level.worldRightEdge))
-						this.level.pepe.moveLeft(this.level.pepe.movementSpeed);
-				}
-			}
-		}
-		Game.requestMoveRight = requestAnimationFrame(this.moveRight.bind(this));
+	 setStatus(currentStatus) {
+		
 	}
 
 	/**
 	 * Adds all necessary touch listener events for user interaction with the GamePad Elements
-	 * @param {Character} pepe
-	 * @param {Game} game
 	 */
-	listenForTouches(pepe, game) {
+	listenForTouches() {
 		document.getElementById("left-pad").addEventListener("touchstart", function (e) {
 			e.preventDefault();
-			pepe.isMovingLeft = true;
-			pepe.moveInProgress = true;
-			pepe.direction = LEFT;
-			Game.requestMoveLeft = window.requestAnimationFrame(game.moveLeft.bind(game));
+			ACTIONS['moveLeft']['requested'] = true;
 		});
 		document.getElementById("left-pad").addEventListener("touchend", function (e) {
 			e.preventDefault();
-			pepe.isMovingLeft = false;
-			pepe.moveInProgress = false;
-			window.cancelAnimationFrame(Game.requestMoveLeft);
-
+			ACTIONS['moveLeft']['requested'] = false;
 		});
 		document.getElementById("right-pad").addEventListener("touchstart", function (e) {
 			e.preventDefault();
-			pepe.isMovingRight = true;
-			pepe.moveInProgress = true;
-			pepe.direction = RIGHT;
-			Game.requestMoveRight = window.requestAnimationFrame(game.moveRight.bind(game));
+			ACTIONS['moveRight']['requested'] = true;
 		});
 		document.getElementById("right-pad").addEventListener("touchend", function (e) {
 			e.preventDefault();
-			pepe.isMovingRight = false;
-			pepe.moveInProgress = false;
-			window.cancelAnimationFrame(Game.requestMoveRight);
+			ACTIONS['moveRight']['requested'] = false;
 		});
 		document.getElementById("jump-pad").addEventListener("touchstart", function (e) {
 			e.preventDefault();
-			if (!pepe.jumpInProgess)
-				window.requestAnimationFrame(pepe.jump.bind(pepe));
+			ACTIONS['jump']['requested'] = true;
+		});
+		document.getElementById("jump-pad").addEventListener("touchend", function (e) {
+			e.preventDefault();
+			ACTIONS['jump']['requested'] = false;
 		});
 		document.getElementById("trow-pad").addEventListener("touchstart", function (e) {
 			e.preventDefault();
-			if (!pepe.throwInProgress) {
-				pepe.bottle.initY = pepe.y;
-				window.requestAnimationFrame(pepe.throwBottle.bind(pepe));
-			}
+			ACTIONS['throw']['requested'] = true;
 		});
-	}
-
-	/**
-	 * Adds all KeyDown and KeyUp Listener events for the user interaction with the Keyboard.
-	 * @param {Character} pepe
-	 * @param {Game} game
-	 */
-	listenForKeys(pepe, game) {
-		document.addEventListener("keydown", function (e) {
-			const k = e.key;
-			if (e.code == "Space" && !pepe.jumpInProgess && pepe.canJump) {
-				window.requestAnimationFrame(pepe.jump.bind(pepe));
-			}
-			if (k == "ArrowRight" && !pepe.isMovingRight) {
-				pepe.isMovingRight = true;
-				pepe.direction = RIGHT_DIRECTION;
-				pepe.moveInProgress = true;
-				Game.requestMoveRight = window.requestAnimationFrame(game.moveRight.bind(game));
-			}
-			if (k == "ArrowLeft" && !pepe.isMovingLeft) {
-				pepe.isMovingLeft = true;
-				pepe.direction = LEFT_DIRECTION;
-				pepe.moveInProgress = true;
-				Game.requestMoveLeft = window.requestAnimationFrame(game.moveLeft.bind(game));
-			}
-			if (k == "d" && !pepe.throwInProgress) {
-				pepe.bottle.initY = pepe.y;
-				pepe.bottle.initX = pepe.x;
-				pepe.bottle.direction = pepe.direction;
-				window.requestAnimationFrame(pepe.throwBottle.bind(pepe));
-			}
-			if (k == "p") {
-				//TODO - PAUSE GAME
-			}
-
-		});
-		document.addEventListener("keyup", function (e) {
-			const k = e.key;
-			if (k == "ArrowRight" && pepe.isMovingRight) {
-				pepe.isMovingRight = false;
-				pepe.moveInProgress = false;
-				window.cancelAnimationFrame(Game.requestMoveRight);
-			}
-			if (k == "ArrowLeft" && pepe.isMovingLeft) {
-				pepe.isMovingLeft = false;
-				pepe.moveInProgress = false;
-				window.cancelAnimationFrame(Game.requestMoveLeft);
-			}
+		document.getElementById("trow-pad").addEventListener("touchend", function (e) {
+			e.preventDefault();
+			ACTIONS['throw']['requested'] = false;
 		});
 	}
 
 	/**
 	 * Adds all KeyDown and KeyUp Listener events for the user interaction with the Keyboard.
 	 */
-	listenForKeys2() {
-		document.addEventListener("keydown", this.handleKeyDown);
-		document.addEventListener("keyup", this.handleKeyUp);
+	listenForKeys() {
+		document.addEventListener("keydown", this.handleKeyDown.bind(this));
+		document.addEventListener("keyup", this.handleKeyUp.bind(this));
 	}
 
-	handleKeyDown(event) {
-		const k = event.key;
-		Game.requestAction = event.code;
-		Game.requestJump = event.code == "Space";
-		Game.requestRightMove = k == "ArrowRight";
-		Game.requestLeftMove = k == "ArrowLeft";
-		Game.requestThrow = k == "d";
+	handleKeyDown(e) {
+		const code = e.code;
+		if (code == ACTIONS['jump']['key'])
+			ACTIONS['jump']['requested'] = true;
+		if (code == ACTIONS['throw']['key'])
+			ACTIONS['throw']['requested'] = true;
+		if (code == ACTIONS['moveLeft']['key'])
+			ACTIONS['moveLeft']['requested'] = true;
+		if (code == ACTIONS['moveRight']['key'])
+			ACTIONS['moveRight']['requested'] = true;
 	}
 
-	handleKeyUp(event) {
-		const k = event.key;
-		Game.stopAction = event.code;
-		Game.requestJump = !(event.code == "Space") && Game.requestJump;
-		Game.requestRightMove = !(k == "ArrowRight") && Game.requestRightMove;
-		Game.requestLeftMove = !(k == "ArrowLeft") && Game.requestLeftMove;
-		Game.requestThrow = !(k == "d") && Game.requestThrow;
+	handleKeyUp(e) {
+		const code = e.code;
+		if (code == ACTIONS['jump']['key'])
+			ACTIONS['jump']['requested'] = false;
+		if (code == ACTIONS['throw']['key'])
+			ACTIONS['throw']['requested'] = false;
+		if (code == ACTIONS['moveLeft']['key'])
+			ACTIONS['moveLeft']['requested'] = false;
+		if (code == ACTIONS['moveRight']['key'])
+			ACTIONS['moveRight']['requested'] = false;
 	}
 }
