@@ -30,7 +30,7 @@ export class Character extends Model {
 		this.canJump = true;
 		this.isImmun = false;
 		this.startHit;
-		this.healt = 100;
+		this.health = 100;
 	}
 
 	/**
@@ -38,6 +38,7 @@ export class Character extends Model {
 	 * @param {number} timeStamp - automatically passed, indicating the precise time requestAnimationFrame() was called.
 	 */
 	jump(timeStamp) {
+		console.log("jumping");
 		if (this.startJump === undefined || !this.jumpInProgess)// jump start
 			this.startJump = timeStamp;// set timer to 0
 		const elapse = (timeStamp - this.startJump) / 1000; //SECONDS
@@ -47,7 +48,7 @@ export class Character extends Model {
 			requestAnimationFrame(this.jump.bind(this));
 		} else { // jump finnish
 			this.jumpInProgess = false;
-			this.y = this.groundPos; //adjust to same altitude
+			this.y = this.groundPos; //adjust to same groundPos
 		}
 	}
 
@@ -77,7 +78,6 @@ export class Character extends Model {
 	 * @param {string} currentStatus - actual status value of Character
 	 */
 	setStatus(currentStatus) {
-
 		if (this.isHit) {
 			if (currentStatus != "hit") {
 				this.animationIndex = 0;
@@ -88,9 +88,8 @@ export class Character extends Model {
 			if (currentStatus != "jump") {
 				this.animationIndex = 0;
 				this.status = "jump";
-				this.animationInterval = 100;
+				this.animationInterval = 300;
 			}
-
 		} else if (this.moveInProgress) {
 			if (currentStatus != "walk") {
 				this.animationIndex = 0;
@@ -108,50 +107,30 @@ export class Character extends Model {
 	}
 
 	update(timeStamp) {
-		if(this.isMovingLeft){
-			this.x -= 5;
-		}
-
-		if(this.isMovingRight){
-			this.x += 5;
-		}
-
-		if(this.tracking)
-			Camera.x = -this.x + 10; // plus start Position
-		
-		//TODO SET DIRECTION
+		this.setStatus(this.status);
 		super.update(timeStamp);
 	}
 
+	getDirection(){
+		if(this.isMovingRight)
+			return RIGHT_DIRECTION;
+		else if(this.isMovingLeft)
+			return LEFT_DIRECTION;
+		else
+			return this.direction;
+	}
+
 	handleActionsRequests(timeStamp){
-		if (ACTIONS["moveLeft"]["requested"] && !this.isMovingLeft) {
-			this.isMovingLeft = true;
-			this.direction = LEFT_DIRECTION;
-			this.moveInProgress = true;
-		}
-
-		if (!ACTIONS["moveLeft"]["requested"] && this.isMovingLeft) {
-			this.isMovingLeft = false;
-			this.moveInProgress = false;
-		}
-
-		if (ACTIONS["moveRight"]["requested"] && !this.isMovingRight) {
-			this.isMovingRight = true;
-			this.direction = RIGHT_DIRECTION;
-			this.moveInProgress = true;
-		}
-
-		if (!ACTIONS["moveRight"]["requested"] && this.isMovingRight) {
-			this.isMovingRight = false;
-			this.moveInProgress = false;
-		}
+		this.moveInProgress = 	ACTIONS["moveLeft"]["requested"] || ACTIONS["moveRight"]["requested"];
+		this.isMovingRight 	= 	ACTIONS["moveRight"]["requested"];
+		this.isMovingLeft 	= 	ACTIONS["moveLeft"]["requested"];
+		this.direction 		= 	this.getDirection();
 
 		if (ACTIONS["jump"]["requested"] && !this.jumpInProgess) {
-			window.requestAnimationFrame(this.jump.bind(this));
+			window.requestAnimationFrame(this.jump.bind(this)); 
 		}
 
 		if (ACTIONS["throw"]["requested"] && !this.throwInProgress) {
-
 			this.bottle.initY = this.y;
 			this.bottle.initX = !this.tracking ? this.x : this.x + (Camera.x * this.distance);
 			window.requestAnimationFrame(this.throwBottle.bind(this));
@@ -162,7 +141,7 @@ export class Character extends Model {
 	 * 
 	 * @param {Model[]} models
 	 */
-	checkForCollisions(models, worldRef) {
+	checkCollisions(models, worldRef) {
 		for (let i = 0; i < models.length; i++) {
 			const model = models[i];
 			if (model instanceof Enemy) {

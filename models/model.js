@@ -1,7 +1,8 @@
-import { RIGHT_DIRECTION, WIREFRAME_ON, WIREFRAME_OFF, NULL } from "../js/constants.js";
+import { RIGHT_DIRECTION, WIREFRAME_ON, WIREFRAME_OFF, NULL, LEFT_DIRECTION } from "../js/constants.js";
 import { Game } from "../js/game.js";
 import { Draw } from "./../js/draw.js"
 import { Camera } from "./../js/camera.js";
+import { Character } from "./character.js";
 
 export class Model extends Draw {
 
@@ -16,6 +17,7 @@ export class Model extends Draw {
 		this.scale = scale; //between 0 and 1, closing to 1 means image size is closer to original, closing to 0 means image size ist smaller
 		this.color = color;
 		this.currentImg;
+		
 
 		this.direction = RIGHT_DIRECTION;
 		this.intervalHit;
@@ -28,7 +30,7 @@ export class Model extends Draw {
 		this.status = status;
 		this.groundPos = Draw.GROUND_POS - height;
 		this.isMovingLeft = false;
-		this.isMovingRight = true;
+		this.isMovingRight = false;
 
 		this.requestMoveRight = 0;
 		this.requestMoveLeft = 0;
@@ -44,26 +46,19 @@ export class Model extends Draw {
 	 * Draws a Model on a initialized canvas. Canvas is to be initialized using the static methode init of the Draw class
 	 */
 	draw() {
-		/**
-		 * Only Draw Instance if is inside Canvas
-		 */
 		if (this.isInsideCanvas()) {
 			if (Game.debugMode)
 				this.showInfo();
 			if (this.currentImg && this.currentImg.complete) {
 				Draw.ctx.save();
 				Draw.ctx.scale(this.direction, 1);
-				// if (this.tracking)
 				Draw.ctx.translate(Camera.x * this.distance, Camera.y * this.distance);
 				Draw.ctx.drawImage(this.currentImg, this.x * this.direction, this.y, this.width * this.direction, this.height);
-				// if(this.tracking)
-				// 	Draw.ctx.translate(-Camera.x * this.distance, -Camera.y * this.distance);
 				if (Game.debugMode && this.wireframeMode)
 					this.drawWireframe();
 				Draw.ctx.restore();
 			}
-			else { //image is not commplete or is missing or is broken or not right set
-				//TODO Match the draw from above // test wihout imgs
+			else {
 				Draw.drawModelRect(this);
 			}
 		}
@@ -92,7 +87,7 @@ export class Model extends Draw {
 	 * @param {number} movementSpeed 
 	 */
 	moveLeft(movementSpeed) {
-		this.x += movementSpeed ? (movementSpeed * this.distance) : (this.movementSpeed * this.distance);
+		this.x -= movementSpeed ? (movementSpeed * this.distance) : (this.movementSpeed * this.distance);
 	}
 
 	/**
@@ -101,7 +96,19 @@ export class Model extends Draw {
 	 * @param {number} movementSpeed 
 	 */
 	moveRight(movementSpeed) {
-		this.x -= movementSpeed ? (movementSpeed * this.distance) : (this.movementSpeed * this.distance);
+		this.x += movementSpeed ? (movementSpeed * this.distance) : (this.movementSpeed * this.distance);
+	}
+
+	/**
+	 * Moves the  Model by a given speed
+	 * 
+	 * @param {number} movementSpeed 
+	 */
+	move(movementSpeed) {
+		if (this.direction == LEFT_DIRECTION)
+			this.x -= movementSpeed ? (movementSpeed * this.distance) : (this.movementSpeed * this.distance);
+		if (this.direction == RIGHT_DIRECTION)
+			this.x += movementSpeed ? (movementSpeed * this.distance) : (this.movementSpeed * this.distance);
 	}
 
 	/**

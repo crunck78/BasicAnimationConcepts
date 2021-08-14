@@ -5,6 +5,5 @@ export class Background extends Model{
 		super(xPos, yPos, distance, scale, width, height, color);
 		this.currentImg = new Image();
 		this.currentImg.src = imgSrc;
-		//console.log(this.img);
 	}
 }

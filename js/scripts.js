@@ -13,3 +13,4 @@ import { Hud } from "./hud.js";
 	// newGame.listenForKeys2();
 	window.Draw = Draw;
 	window.Game = Game;
+	window.newGame = newGame;

@@ -4,8 +4,6 @@ import { LEFT_DIRECTION, RIGHT_DIRECTION, LEFT_SIDE, RIGHT_SIDE, ABOVE_SIDE, BEL
 import { Log } from "./log.js"
 import { Character } from "../models/character.js"
 import { Camera } from "./camera.js"
-import { Bottle } from "../models/bottle.js"
-import { Coin } from "../models/coin.js"
 import { Hud } from "./hud.js"
 
 export class Game extends Draw {
@@ -21,7 +19,7 @@ export class Game extends Draw {
 		super();
 		
 		this.level = new World(allAnimations);
-		this.hud = new Hud(this.level.pepe);
+		this.hud = new Hud(this.level.character);
 		
 		this.drawStamp;
 		this.drawRequest = requestAnimationFrame(this.draw.bind(this));
@@ -57,7 +55,7 @@ export class Game extends Draw {
 
 	stopDraw() {
 		this.drawStamp = undefined;
-		this.cancelAnimationFrame(this.drawRequest);
+		cancelAnimationFrame(this.drawRequest);
 	}
 
 	/**
@@ -78,7 +76,7 @@ export class Game extends Draw {
 
 	stopUpdate() {
 		this.updateStamp = undefined;
-		this.cancelAnimationFrame(this.updateRequest);
+		cancelAnimationFrame(this.updateRequest);
 	}
 
 	/**
@@ -88,7 +86,7 @@ export class Game extends Draw {
 	checkCollisions(timeStamp) {
 		if (this.collisionsStamp === undefined)
 			this.collisionsStamp = timeStamp;
-		this.level.checkForCollisions(timeStamp);
+		this.level.checkCollisions(timeStamp);
 		this.collisionsRequest = requestAnimationFrame(this.checkCollisions.bind(this));
 	}
 
@@ -98,7 +96,7 @@ export class Game extends Draw {
 
 	stopCollisionsCheck() {
 		this.collisionsStamp = undefined;
-		this.cancelAnimationFrame(this.collisionsRequest);
+		cancelAnimationFrame(this.collisionsRequest);
 	}
 
 	handleActionsRequests(timeStamp) {
@@ -114,7 +112,7 @@ export class Game extends Draw {
 
 	stopHandleActionsRequests() {
 		this.startActions = undefined;
-		this.cancelAnimationFrame(this.actionsRequest);
+		cancelAnimationFrame(this.actionsRequest);
 	}
 
 	/**
@@ -163,9 +161,6 @@ export class Game extends Draw {
 		});
 	}
 
-	/**
-	 * Adds all KeyDown and KeyUp Listener events for the user interaction with the Keyboard.
-	 */
 	listenForKeys() {
 		document.addEventListener("keydown", this.handleKeyDown.bind(this));
 		document.addEventListener("keyup", this.handleKeyUp.bind(this));

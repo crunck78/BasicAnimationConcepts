@@ -57,6 +57,7 @@ const BELOW_SIDE = 0;
  * @var {{number}}
  */
 const GRAVITY = 9.81 * 100;
+const Y_VELOCITY = -98.1 * 6;
 
 const ACTIONS = {
   jump: { key: "Space", requested: false },

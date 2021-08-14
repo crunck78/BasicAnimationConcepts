@@ -17,7 +17,7 @@ export class Hud extends Draw {
         this.show();
         this.hud.innerHTML = `
         <div id="bars-container" class="hud-element">
-            <img id="life-bar" src="img/HUD/life-bar/life_${this.player.healt}.png">
+            <img id="life-bar" src="img/HUD/life-bar/life_${this.player.health}.png">
         </div>
 
         <div id="item-list" class="hud-element">
@@ -36,7 +36,7 @@ export class Hud extends Draw {
     update(timeStamp){
         this.coinsCounter.innerHTML = this.player.coins;
         this.bottlesCounter.innerHTML = this.player.bottles;
-        this.lifeBar.src = `img/HUD/life-bar/life_${this.player.healt}.png`;
+        this.lifeBar.src = `img/HUD/life-bar/life_${this.player.health}.png`;
     }
 
     show() {

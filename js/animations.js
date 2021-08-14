@@ -2,7 +2,7 @@
 
 const pepeImages = {
     walk: ["img/character/walk/right/W-21.png", "img/character/walk/right/W-22.png", "img/character/walk/right/W-23.png", "img/character/walk/right/W-24.png", "img/character/walk/right/W-25.png", "img/character/walk/right/W-26.png"],
-    jump: ["img/character/jump/right/J-33.png", "img/character/jump/right/J-34.png", "img/character/jump/right/J-35.png"],
+    jump: ["img/character/jump/right/J-33.png", "img/character/jump/right/J-34.png", "img/character/jump/right/J-35.png", "img/character/jump/right/J-36.png", "img/character/jump/right/J-37.png", "img/character/jump/right/J-38.png"],
     land: ["img/character/jump/right/J-36.png", "img/character/jump/right/J-37.png", "img/character/jump/right/J-38.png"],
     hit: ["img/character/hit/right/H-41.png", "img/character/hit/right/H-42.png", "img/character/hit/right/H-43.png"],
     idle: ["img/character/idle/right/I-1.png", "img/character/idle/right/I-2.png", "img/character/idle/right/I-3.png", "img/character/idle/right/I-4.png", "img/character/idle/right/I-5.png", "img/character/idle/right/I-6.png", "img/character/idle/right/I-7.png", "img/character/idle/right/I-8.png", "img/character/idle/right/I-9.png", "img/character/idle/right/I-10.png"],
