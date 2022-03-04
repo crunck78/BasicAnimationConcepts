@@ -5,12 +5,12 @@ import { createAllAnimations } from "./animations.js"
 import { Hud } from "./hud.js";
 
 
-	const allAnimations = await createAllAnimations();
-	document.getElementById("load").classList.add("d-none");
-	document.getElementById("touchpad").classList.remove("d-none");
-	const newGame = new Game(allAnimations);
-	
-	// newGame.listenForKeys2();
-	window.Draw = Draw;
-	window.Game = Game;
-	window.newGame = newGame;
+const allAnimations = await createAllAnimations();
+document.getElementById("load").classList.add("d-none");
+document.getElementById("touchpad").classList.remove("d-none");
+const newGame = new Game(allAnimations);
+
+// newGame.listenForKeys2();
+window.Draw = Draw;
+window.Game = Game;
+window.newGame = newGame;

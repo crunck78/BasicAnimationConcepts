@@ -83,24 +83,13 @@ export class World extends Draw {
 	 * @returns {boolean} true || false
 	 */
 	static isColliding(obj1, obj2) {
-
-		// let translateOffsetX1 = !obj1.tracking ? obj1.x : obj1.x + (Camera.x * obj1.distance);
-		// let translateOffsetX2 = !obj2.tracking ? obj2.x : obj2.x + (Camera.x * obj2.distance);
-		// let translateOffsetY1 = !obj1.tracking ? obj1.y : obj1.y + (Camera.y * obj1.distance);
-		// let translateOffsetY2 = !obj2.tracking ? obj2.y : obj2.y + (Camera.y * obj2.distance);
-
-		let translateOffsetX1 = obj1.x;//!obj1.tracking ? obj1.x : obj1.x + (Camera.x * obj1.distance);
-		let translateOffsetX2 = obj2.x;//!obj2.tracking ? obj2.x : obj2.x + (Camera.x * obj2.distance);
-		let translateOffsetY1 = obj1.y;//!obj1.tracking ? obj1.y : obj1.y + (Camera.y * obj1.distance);
-		let translateOffsetY2 = obj2.y;//!obj2.tracking ? obj2.y : obj2.y + (Camera.y * obj2.distance);
-
-		return ((translateOffsetX1 + translateOffsetX2 - obj2.collisionOffset.x[RIGHT_SIDE])
+		return ((obj1.x + obj2.x - obj2.collisionOffset.x[RIGHT_SIDE])
 			< (obj1.width - obj1.collisionOffset.x[LEFT_SIDE])
-			&& (translateOffsetX1 - translateOffsetX2 + obj1.collisionOffset.x[LEFT_SIDE])
+			&& (obj1.x - obj2.x + obj1.collisionOffset.x[LEFT_SIDE])
 			< (obj2.width - obj2.collisionOffset.x[RIGHT_SIDE]))
-			&& ((translateOffsetY2 - translateOffsetY1 + obj2.collisionOffset.y[ABOVE_SIDE])
+			&& ((obj2.y - obj1.y + obj2.collisionOffset.y[ABOVE_SIDE])
 				< (obj1.height - obj1.collisionOffset.y[BELOW_SIDE]))
-			&& ((translateOffsetY1 - translateOffsetY2 + obj1.collisionOffset.y[BELOW_SIDE])
+			&& ((obj1.y - obj2.y + obj1.collisionOffset.y[BELOW_SIDE])
 				< (obj2.height - obj1.collisionOffset.y[ABOVE_SIDE]));
 	}
 

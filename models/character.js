@@ -158,33 +158,33 @@ export class Character extends Model {
 	 * @param {Enemy} enemy -
 	 */
 	checkEnemyCollision(enemy, worldRef) {
-		// if (enemy.status != "dead") {
-		// 	if (World.isColliding(this, enemy)) {
-		// 		if (enemy.canHit) {
-		// 			this.isHit = true;
-		// 			if (this.startHit === undefined) {
-		// 				console.log("FIRST HIT");
-		// 				this.startHit = timeStamp;
-		// 				this.intervalHit = IMMUNITY_TIME;
-		// 				this.healt -= enemy.damage;
-		// 			}
-		// 			const elapse = Math.trunc(timeStamp - this.startHit);
-		// 			if (elapse > this.intervalHit) {
-		// 				this.intervalHit = 1000 + elapse;
-		// 				this.healt -= enemy.damage;
-		// 			}
-		// 			return;
-		// 		} else {
-		// 			enemy.status = "dead";
-		// 			this.isHit = false;
-		// 			this.startHit = timeStamp;
-		// 		}
-		// 	} else {
-		// 		this.isHit = false;
-		// 		//this.startHit = timeStamp;
-		// 	}
-		// 	enemy.canHit = this.isIntersectingX(enemy) && !this.pepe.isAbove(enemy);
-		// }
+		if (enemy.status != "dead") {
+			if (World.isColliding(this, enemy)) {
+				if (enemy.canHit) {
+					this.isHit = true;
+					if (this.startHit === undefined) {
+						console.log("FIRST HIT");
+						this.startHit = timeStamp;
+						this.intervalHit = IMMUNITY_TIME;
+						this.healt -= enemy.damage;
+					}
+					const elapse = Math.trunc(timeStamp - this.startHit);
+					if (elapse > this.intervalHit) {
+						this.intervalHit = 1000 + elapse;
+						this.healt -= enemy.damage;
+					}
+					return;
+				} else {
+					enemy.status = "dead";
+					this.isHit = false;
+					this.startHit = timeStamp;
+				}
+			} else {
+				this.isHit = false;
+				//this.startHit = timeStamp;
+			}
+			enemy.canHit = this.isIntersectingX(enemy) && !this.pepe.isAbove(enemy);
+		}
 	}
 
 	/**
